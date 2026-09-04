@@ -1,0 +1,60 @@
+@import "tailwindcss";
+
+@theme {
+  /* Ink & surface */
+  --color-ink: #0b1220;
+  --color-graphite: #1c2637;
+  --color-slate-body: #46536b;
+  --color-muted: #6b7788;
+  --color-stone: #8a94a6;
+  --color-hairline: #e4e8ef;
+  --color-surface: #f6f8fb;
+  --color-surface-2: #eef2f8;
+
+  /* Accent — echoes the blue/cyan gradient of the source deck */
+  --color-accent: #1d6ff2;
+  --color-accent-deep: #0b3fa8;
+  --color-accent-soft: #e8f0fe;
+  --color-cyan: #16bccc;
+
+  /* On dark */
+  --color-on-dark: #ffffff;
+  --color-on-dark-muted: rgba(255, 255, 255, 0.66);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: #ffffff;
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── scroll reveal ── */
+.reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* ── gradient text ── */
+.grad-text {
+  background: linear-gradient(120deg, #1d6ff2 0%, #16bccc 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ── card hover ── */
+.lift { transition: transform 0.3s cubic-bezier(0.16,1,0.3,1), box-shadow 0.3s ease; }
+.lift:hover { transform: translateY(-3px); box-shadow: 0 14px 36px rgba(11,18,32,0.10); }
+
+/* ── scrollbar ── */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: #eef2f8; }
+::-webkit-scrollbar-thumb { background: #b6c0d2; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #1d6ff2; }
