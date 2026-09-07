@@ -176,15 +176,15 @@ function Hero() {
           </h1>
 
           <p {...step(160)} className={`${step(160).className} font-display text-[0.95rem] md:text-base font-medium tracking-[0.04em] text-accent mb-8`}>
-            Engineer · Innovation Practitioner · Technology Builder
+            Engineer · Innovation Practitioner · Technology Builder · Product Developer
           </p>
 
           <p {...step(240)} className={`${step(240).className} text-[1.1rem] md:text-[1.28rem] leading-[1.5] text-bright/90 max-w-[42rem] mb-6`}>
             Turning scientific and engineering ideas into technologies that can be built, tested, validated, and developed toward real-world products.
           </p>
 
-          <p {...step(320)} className={`${step(320).className} text-[0.94rem] leading-relaxed text-dim max-w-[38rem] mb-8`}>
-            Working across electronics, RF and wireless systems, intelligent sensing, AI, digital health, biomedical technology, environmental monitoring, and precision agriculture.
+          <p {...step(320)} className={`${step(320).className} font-display text-[0.95rem] md:text-base font-medium tracking-[0.02em] text-dim mb-8`}>
+            Human Centric Innovation
           </p>
 
           <div {...step(380)} className={`${step(380).className} flex flex-wrap items-center gap-x-2.5 gap-y-2 mb-10`}>
@@ -470,7 +470,8 @@ function Work() {
         'Mercu Buana Energy Harvesting Center — a research hub focused on renewable sources including solar, wind, and thermal energy, and on converting them into efficient power systems. It supports work on energy storage and smart grids toward SDG 7 and SDG 9.',
       ],
       figures: [
-        { src: '/img/mberr-diagram.jpg', alt: 'MBERR applications diagram', cap: 'Applications' },
+        { src: '/img/mberr-diagram.jpg', alt: 'MBERR applications diagram across a city', cap: 'Applications' },
+        { src: '/img/mberr-infographic.jpg', alt: 'MBERR facilities: energy storage, smart area, co-working space, solar panel, and bio energy', cap: 'Facilities', contain: true },
       ],
       note: 'Prepared for a grant competition on energy-efficient buildings.',
     },
@@ -1164,6 +1165,7 @@ function Contact() {
     { label: 'Email', value: 'primawijayakusuma38@gmail.com', href: 'mailto:primawijayakusuma38@gmail.com' },
     { label: 'LinkedIn', value: 'in/primawijayakusuma', href: 'https://www.linkedin.com/in/primawijayakusuma/' },
     { label: 'GitHub', value: 'primawijayakusuma', href: 'https://github.com/primawijayakusuma' },
+    { label: 'ResearchGate', value: 'Prima-Wijayakusuma', href: 'https://www.researchgate.net/profile/Prima-Wijayakusuma' },
   ];
   return (
     <footer id="contact" className="py-20">
@@ -1180,7 +1182,7 @@ function Contact() {
               </p>
             </div>
 
-            <div className="grid sm:grid-cols-3 lg:grid-cols-1 gap-3 w-full lg:w-[340px]">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-1 gap-3 w-full lg:w-[340px]">
               {links.map(l => (
                 <a key={l.label} href={l.href}
                   target={l.href.startsWith('http') ? '_blank' : undefined}
