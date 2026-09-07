@@ -276,11 +276,11 @@ function About() {
           <Reveal delay={120}>
             <figure>
               <div className="relative aspect-[3/2] rounded-xl overflow-hidden border border-line bg-panel-2">
-                <Image src="/img/about-research.jpg" alt="Prima presenting engineering research at an exhibition"
+                <Image src="/img/about-research.jpg" alt="Prima demonstrating the TerraGrow prototype to a visitor at the ITEX international exhibition"
                   fill sizes="(max-width: 1024px) 100vw, 420px" className="object-cover" />
               </div>
               <figcaption className="mt-3 font-mono text-[11px] text-faint">
-                Presenting applied research at an international exhibition
+                Demonstrating the TerraGrow prototype at the ITEX international exhibition
               </figcaption>
             </figure>
           </Reveal>
@@ -927,7 +927,7 @@ function Recognition() {
     },
     {
       award: 'Gold Medal & Special Award', org: 'The World Invention Technology Expo (WINTEX) — KIPA', country: 'Korea', year: '2023',
-      project: 'TerraGrow', img: '/img/rec-kipa.jpg',
+      project: 'TerraGrow', img: '/img/rec-wintex-kipa.jpg',
       note: 'Special Award for Incubation Opportunity from the Korea Invention Promotion Association.',
     },
     {
@@ -942,7 +942,7 @@ function Recognition() {
     },
     {
       award: 'Incubator Opportunity Award', org: 'INOTEK Foundation', country: 'Indonesia', year: '',
-      project: 'TerraGrow', img: '/img/rec-wintex-inotek.jpg',
+      project: 'TerraGrow', img: '/img/rec-inotek.jpg',
       note: '',
     },
   ];
