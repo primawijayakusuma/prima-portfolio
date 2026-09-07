@@ -490,7 +490,7 @@ function Work() {
         />
 
         {/* ── FLAGSHIP: TERRAGROW ── */}
-        <div id="terragrow" className="mb-6 rounded-3xl border border-line-strong bg-tint overflow-hidden">
+        <div id="terragrow" className="mb-6 rounded-3xl border border-line-strong bg-white overflow-hidden">
           <div className="p-7 md:p-10 lg:p-12">
             <div className="flex flex-wrap items-center gap-3 mb-6">
               <span className="text-[10px] font-semibold tracking-[0.16em] uppercase text-void bg-accent rounded-full px-2.5 py-1">Flagship</span>
@@ -543,7 +543,7 @@ function Work() {
             </div>
 
             {/* journey */}
-            <div className="rounded-2xl border border-line bg-tint p-7 md:p-8 mb-6">
+            <div className="rounded-2xl border border-line bg-white p-7 md:p-8 mb-6">
               <Eyebrow>Research to product</Eyebrow>
               <ol className="grid sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-7 mt-7">
                 {journey.map(([stage, desc], i) => (
@@ -562,7 +562,7 @@ function Work() {
             {/* highlights */}
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
               {highlights.map(([t, d]) => (
-                <div key={t} className="card rounded-xl p-6">
+                <div key={t} className="card plain rounded-xl p-6">
                   <h4 className="font-display text-sm font-bold text-bright mb-2.5">{t}</h4>
                   <p className="text-[12.5px] leading-relaxed text-body">{d}</p>
                 </div>
@@ -571,7 +571,7 @@ function Work() {
 
             {/* publication */}
             <div className="rounded-2xl border border-accent/30 bg-accent/[0.06] p-7 md:p-9 mb-6">
-              <div className="grid md:grid-cols-[1fr_auto] gap-8 items-start">
+              <div>
                 <div className="min-w-0">
                   <Eyebrow>Published Research</Eyebrow>
                   <h4 className="font-display text-lg md:text-[1.35rem] font-bold leading-snug text-bright mt-4 mb-4">
@@ -594,17 +594,11 @@ function Work() {
                     <span className="font-mono text-[11px] text-faint">DOI: 10.1016/j.ohx.2025.e00724</span>
                   </div>
                 </div>
-                <figure className="w-full md:w-[180px]">
-                  <div className="relative aspect-[3/4] rounded-lg overflow-hidden border border-line bg-white">
-                    <Image src="/img/paper-hardwarex.jpg" alt="First page of the TerraGrow paper in HardwareX"
-                      fill sizes="180px" className="object-cover object-top" />
-                  </div>
-                </figure>
               </div>
             </div>
 
             {/* poster + recognition */}
-            <div className="rounded-2xl border border-line bg-tint p-7 md:p-9">
+            <div className="rounded-2xl border border-line bg-white p-7 md:p-9">
               <div>
                 <Eyebrow>International Recognition</Eyebrow>
                 <ul className="mt-5 space-y-2.5">
@@ -659,7 +653,7 @@ function ProductCard({ product: p, delay }: { product: Product; delay: number })
   const wide = p.figures.length >= 3;
   return (
     <Reveal delay={delay}>
-      <article className="card rounded-2xl overflow-hidden">
+      <article className="card plain rounded-2xl overflow-hidden">
         <div className="grid lg:grid-cols-[1fr_1fr]">
           {/* text */}
           <div className="p-7 md:p-9">
@@ -713,7 +707,7 @@ function ProductCard({ product: p, delay }: { product: Product; delay: number })
           <div className={`grid gap-px bg-line border-t lg:border-t-0 lg:border-l border-line ${wide ? 'grid-cols-2' : 'grid-cols-1'}`}>
             {p.figures.map((f, idx) => (
               <figure key={f.src}
-                className={`relative bg-panel-2 ${wide && idx === 0 ? 'col-span-2 aspect-[16/9]' : wide ? 'aspect-square' : 'aspect-[16/10]'}`}>
+                className={`relative bg-white ${wide && idx === 0 ? 'col-span-2 aspect-[16/9]' : wide ? 'aspect-square' : 'aspect-[16/10]'}`}>
                 <Image src={f.src} alt={f.alt} fill
                   sizes="(max-width: 1024px) 50vw, 300px"
                   className={f.contain ? 'object-contain p-4' : 'object-cover'} />
