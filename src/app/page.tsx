@@ -1170,6 +1170,38 @@ function Booking() {
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
       setForm(f => ({ ...f, [k]: k === 'message' ? e.target.value.slice(0, MAX) : e.target.value }));
 
+  const [copied, setCopied] = useState<'message' | 'email' | null>(null);
+
+  // What the visitor sends by hand when no mail provider is wired up.
+  const plainText = () => [
+    `Name: ${form.name || '-'}`,
+    `Email: ${form.email || '-'}`,
+    `Organization: ${form.org || '-'}`,
+    `LinkedIn: ${form.linkedin || '-'}`,
+    `About: ${form.purpose || '-'}`,
+    '',
+    form.message || '',
+  ].join('\n');
+
+  const copy = async (text: string, what: 'message' | 'email') => {
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch {
+      // Clipboard can be blocked; fall back to a hidden textarea + execCommand.
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.setAttribute('readonly', '');
+      ta.style.position = 'fixed';
+      ta.style.left = '-9999px';
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); } catch { /* nothing else to try */ }
+      document.body.removeChild(ta);
+    }
+    setCopied(what);
+    setTimeout(() => setCopied(null), 2200);
+  };
+
   // Used when no mail provider is configured, so a request is never lost.
   const mailto = () => {
     const body = [
@@ -1232,16 +1264,36 @@ function Booking() {
               </p>
             </div>
           ) : state === 'fallback' ? (
-            <div className="rounded-2xl border border-line bg-white p-9">
+            <div className="rounded-2xl border border-line bg-white p-7 md:p-9">
               <h3 className="font-display text-lg font-bold text-bright mb-3">One more step</h3>
-              <p className="text-[0.92rem] leading-relaxed text-body mb-6">
-                The form is not connected to a mail service yet, so nothing has been sent. The button below opens an email with everything you typed already filled in.
+              <p className="text-[0.92rem] leading-relaxed text-body mb-7">
+                Nothing has been sent yet. Either open it in your mail app, or copy the message below and send it however you prefer — both reach the same inbox.
               </p>
-              <a href={mailto()}
-                className="group inline-flex items-center gap-2 bg-bright text-void font-semibold text-sm px-6 py-3.5 rounded-full hover:opacity-90 transition-opacity">
-                Open prefilled email
-                <span className="group-hover:translate-x-0.5 transition-transform"><ArrowUpRight /></span>
-              </a>
+
+              <div className="flex flex-wrap gap-3 mb-7">
+                <a href={mailto()}
+                  className="group inline-flex items-center gap-2 bg-bright text-void font-semibold text-sm px-6 py-3.5 rounded-full hover:opacity-90 transition-opacity">
+                  Open in mail app
+                  <span className="group-hover:translate-x-0.5 transition-transform"><ArrowUpRight /></span>
+                </a>
+                <button type="button" onClick={() => copy(plainText(), 'message')}
+                  className="inline-flex items-center gap-2 border border-line-strong text-bright font-medium text-sm px-6 py-3.5 rounded-full hover:bg-tint-2 transition-colors">
+                  {copied === 'message' ? 'Message copied' : 'Copy the message'}
+                </button>
+              </div>
+
+              <div className="rounded-xl border border-line bg-tint p-5">
+                <div className="flex items-center justify-between gap-3 mb-3">
+                  <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-faint">Send it to</span>
+                  <button type="button" onClick={() => copy('primawijayakusuma38@gmail.com', 'email')}
+                    className="font-mono text-[10.5px] uppercase tracking-[0.1em] text-accent hover:text-accent-deep transition-colors">
+                    {copied === 'email' ? 'Copied' : 'Copy address'}
+                  </button>
+                </div>
+                <p className="text-[0.88rem] text-bright mb-5 break-all">primawijayakusuma38@gmail.com</p>
+                <div className="font-mono text-[10px] uppercase tracking-[0.12em] text-faint mb-2">Your message</div>
+                <pre className="text-[12px] leading-relaxed text-body whitespace-pre-wrap font-sans max-h-56 overflow-y-auto">{plainText()}</pre>
+              </div>
             </div>
           ) : (
             <form onSubmit={submit} className="relative rounded-2xl border border-line bg-white p-7 md:p-9 shadow-[0_10px_40px_rgba(11,18,32,0.05)]">
