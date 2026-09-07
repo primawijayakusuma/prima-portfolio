@@ -113,9 +113,9 @@ function Nav() {
         </div>
 
         <div className="flex items-center gap-3">
-          <a href="#contact"
+          <a href="#booking"
             className="hidden sm:inline-flex items-center gap-1.5 bg-bright text-void text-sm font-semibold px-4 py-2 rounded-full hover:opacity-90 transition-colors">
-            Contact
+            Book a call
           </a>
           <button onClick={() => setOpen(!open)} className="lg:hidden p-2 -mr-2 text-bright"
             aria-label={open ? 'Close menu' : 'Open menu'} aria-expanded={open}>
@@ -133,8 +133,8 @@ function Nav() {
           {links.map(l => (
             <a key={l.label} href={l.href} onClick={() => setOpen(false)} className="text-sm text-body">{l.label}</a>
           ))}
-          <a href="#contact" onClick={() => setOpen(false)}
-            className="bg-bright text-void text-sm font-semibold text-center py-3 rounded-full mt-1">Contact</a>
+          <a href="#booking" onClick={() => setOpen(false)}
+            className="bg-bright text-void text-sm font-semibold text-center py-3 rounded-full mt-1">Book a call</a>
         </div>
       )}
     </header>
@@ -183,8 +183,8 @@ function Hero() {
             Turning scientific and engineering ideas into technologies that can be built, tested, validated, and developed toward real-world products.
           </p>
 
-          <p {...step(320)} className={`${step(320).className} font-display text-[0.95rem] md:text-base font-medium tracking-[0.02em] text-dim mb-8`}>
-            Human Centric Innovation
+          <p {...step(320)} className={`${step(320).className} text-[0.96rem] leading-relaxed text-dim max-w-[38rem] mb-8`}>
+            Building human-centered, intelligent, and sustainable technologies designed for meaningful real-world impact.
           </p>
 
           <div {...step(380)} className={`${step(380).className} flex flex-wrap items-center gap-x-2.5 gap-y-2 mb-10`}>
@@ -1141,18 +1141,190 @@ function BuildWithMe() {
               </p>
             </div>
             <div className="flex flex-wrap gap-3 lg:flex-shrink-0">
-              <a href="mailto:primawijayakusuma38@gmail.com?subject=Let%E2%80%99s%20build%20something"
+              <a href="#booking"
                 className="group inline-flex items-center gap-2 bg-bright text-void font-semibold text-sm px-6 py-3.5 rounded-full hover:opacity-90 transition-colors">
                 Let&rsquo;s Build Something
                 <span className="group-hover:translate-x-0.5 transition-transform"><ArrowUpRight /></span>
               </a>
-              <a href="#contact"
+              <a href="#booking"
                 className="inline-flex items-center border border-line-strong text-bright font-medium text-sm px-6 py-3.5 rounded-full hover:bg-tint-2 transition-colors">
                 Start a Conversation
               </a>
             </div>
           </div>
         </Reveal>
+      </div>
+    </section>
+  );
+}
+
+// ─── 10 BOOK A CALL ───────────────────────────────────────────────────────────
+
+function Booking() {
+  const [form, setForm] = useState({ name: '', email: '', org: '', linkedin: '', purpose: '', message: '', trap: '' });
+  const [state, setState] = useState<'idle' | 'sending' | 'sent' | 'fallback' | 'error'>('idle');
+  const [error, setError] = useState('');
+  const MAX = 500;
+
+  const set = (k: keyof typeof form) =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
+      setForm(f => ({ ...f, [k]: k === 'message' ? e.target.value.slice(0, MAX) : e.target.value }));
+
+  // Used when no mail provider is configured, so a request is never lost.
+  const mailto = () => {
+    const body = [
+      `Name: ${form.name || '-'}`,
+      `Organization: ${form.org || '-'}`,
+      `LinkedIn: ${form.linkedin || '-'}`,
+      `About: ${form.purpose || '-'}`,
+      '',
+      form.message || '',
+    ].join('\n');
+    return `mailto:primawijayakusuma38@gmail.com?subject=${encodeURIComponent(
+      `${form.purpose || 'Booking request'} - ${form.name || 'Portfolio'}`
+    )}&body=${encodeURIComponent(body)}`;
+  };
+
+  const submit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setState('sending');
+    setError('');
+    try {
+      const res = await fetch('/api/booking', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data.ok) { setState('sent'); return; }
+      if (res.status === 503) { setState('fallback'); return; }
+      setError(data.error || 'Something went wrong on our side. Please email me directly.');
+      setState('error');
+    } catch {
+      setError('Could not reach the server. Please check your connection or email me directly.');
+      setState('error');
+    }
+  };
+
+  const field = 'w-full bg-white border border-line rounded-xl px-4 py-3 text-[0.92rem] text-bright placeholder:text-faint outline-none focus:border-accent focus:ring-2 focus:ring-accent/15 transition-all';
+  const label = 'block text-[0.85rem] font-medium text-bright mb-2';
+
+  return (
+    <section id="booking" className="relative py-24 border-b border-line overflow-hidden">
+      <div className="absolute inset-0 grid-bg opacity-40" aria-hidden />
+      <div className="absolute top-1/4 right-0 w-[520px] h-[520px] rounded-full bg-accent/[0.06] blur-[150px] pointer-events-none" aria-hidden />
+
+      <div className="relative max-w-[1200px] mx-auto px-6">
+        <SectionHeader
+          num="10"
+          eyebrow="Book a call"
+          title="Keynotes &amp; collaboration."
+          sub="For a talk, a technical collaboration, a research-to-product question, or an early-stage idea you want a second engineer on — start here."
+          align="center"
+        />
+
+        <div className="max-w-2xl mx-auto">
+          {state === 'sent' ? (
+            <div className="rounded-2xl border border-accent/30 bg-accent/[0.05] p-9 text-center">
+              <h3 className="font-display text-xl font-bold text-bright mb-3">Request received.</h3>
+              <p className="text-[0.94rem] text-body">
+                Thanks{form.name ? `, ${form.name.split(' ')[0]}` : ''} — I&rsquo;ll reply to <strong className="text-bright">{form.email}</strong>.
+              </p>
+            </div>
+          ) : state === 'fallback' ? (
+            <div className="rounded-2xl border border-line bg-white p-9">
+              <h3 className="font-display text-lg font-bold text-bright mb-3">One more step</h3>
+              <p className="text-[0.92rem] leading-relaxed text-body mb-6">
+                The form is not connected to a mail service yet, so nothing has been sent. The button below opens an email with everything you typed already filled in.
+              </p>
+              <a href={mailto()}
+                className="group inline-flex items-center gap-2 bg-bright text-void font-semibold text-sm px-6 py-3.5 rounded-full hover:opacity-90 transition-opacity">
+                Open prefilled email
+                <span className="group-hover:translate-x-0.5 transition-transform"><ArrowUpRight /></span>
+              </a>
+            </div>
+          ) : (
+            <form onSubmit={submit} className="relative rounded-2xl border border-line bg-white p-7 md:p-9 shadow-[0_10px_40px_rgba(11,18,32,0.05)]">
+              <div className="grid sm:grid-cols-2 gap-5 mb-5">
+                <div>
+                  <label htmlFor="b-name" className={label}>Full Name *</label>
+                  <input id="b-name" type="text" required value={form.name} onChange={set('name')}
+                    placeholder="Your name" className={field} />
+                </div>
+                <div>
+                  <label htmlFor="b-email" className={label}>Email Address *</label>
+                  <input id="b-email" type="email" required value={form.email} onChange={set('email')}
+                    placeholder="you@company.com" className={field} />
+                </div>
+              </div>
+
+              <div className="grid sm:grid-cols-2 gap-5 mb-5">
+                <div>
+                  <label htmlFor="b-org" className={label}>Company / Organization</label>
+                  <input id="b-org" type="text" value={form.org} onChange={set('org')}
+                    placeholder="Your organization" className={field} />
+                </div>
+                <div>
+                  <label htmlFor="b-purpose" className={label}>What is this about?</label>
+                  <select id="b-purpose" value={form.purpose} onChange={set('purpose')} className={`${field} appearance-none`}>
+                    <option value="">Select one</option>
+                    <option value="Keynote or talk">Keynote or talk</option>
+                    <option value="Technical collaboration">Technical collaboration</option>
+                    <option value="Research to product">Research to product</option>
+                    <option value="Engineering consulting">Engineering consulting</option>
+                    <option value="Early-stage idea">Early-stage idea</option>
+                    <option value="Something else">Something else</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="mb-5">
+                <label htmlFor="b-linkedin" className={label}>LinkedIn Profile</label>
+                <input id="b-linkedin" type="url" value={form.linkedin} onChange={set('linkedin')}
+                  placeholder="https://linkedin.com/in/yourprofile" className={field} />
+              </div>
+
+              <div className="mb-6">
+                <label htmlFor="b-message" className={label}>Brief Description / Reason to Meet</label>
+                <textarea id="b-message" rows={5} value={form.message} onChange={set('message')}
+                  placeholder="Tell me briefly why you would like to connect and what you are hoping to discuss..."
+                  className={`${field} resize-y`} />
+                <div className="mt-2 text-right font-mono text-[10.5px] text-faint" aria-live="polite">
+                  {form.message.length} / {MAX} characters
+                </div>
+              </div>
+
+              {/* Honeypot - hidden from people, tempting to bots */}
+              <div aria-hidden className="absolute -left-[9999px] w-px h-px overflow-hidden">
+                <label htmlFor="b-trap">Leave this field empty</label>
+                <input id="b-trap" type="text" tabIndex={-1} autoComplete="off" value={form.trap} onChange={set('trap')} />
+              </div>
+
+              {state === 'error' && (
+                <div role="alert" className="mb-5 rounded-xl border border-red-300 bg-red-50 px-4 py-3 text-[0.86rem] text-red-800">
+                  {error}{' '}
+                  <a href="mailto:primawijayakusuma38@gmail.com" className="font-semibold underline underline-offset-2">
+                    primawijayakusuma38@gmail.com
+                  </a>
+                </div>
+              )}
+
+              <button type="submit" disabled={state === 'sending'}
+                className="group w-full inline-flex items-center justify-center gap-2 bg-bright text-void font-semibold text-sm py-4 rounded-full hover:opacity-90 transition-opacity disabled:opacity-60 disabled:cursor-not-allowed">
+                {state === 'sending' ? 'Sending...' : 'Send Message'}
+                {state !== 'sending' && (
+                  <span className="group-hover:translate-x-0.5 transition-transform"><ArrowUpRight /></span>
+                )}
+              </button>
+              <p className="mt-4 text-center text-[11px] text-faint">
+                Or email directly at{' '}
+                <a href="mailto:primawijayakusuma38@gmail.com" className="text-accent hover:underline underline-offset-2">
+                  primawijayakusuma38@gmail.com
+                </a>
+              </p>
+            </form>
+          )}
+        </div>
       </div>
     </section>
   );
@@ -1231,6 +1403,7 @@ export default function Home() {
         <Recognition />
         <Education />
         <Recommendations />
+        <Booking />
       </main>
       <Contact />
     </>
