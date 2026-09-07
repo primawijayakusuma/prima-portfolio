@@ -1,24 +1,34 @@
 @import "tailwindcss";
 
+/* ─────────────────────────────────────────────────────────────────────────────
+   LIGHT THEME.
+   Every colour the page uses is defined here. To go back to the dark theme,
+   swap this block for the one in commit 21eadcc — no component changes needed.
+   ───────────────────────────────────────────────────────────────────────────── */
+
 @theme {
-  /* Surfaces — dark editorial */
-  --color-void: #0a0a0b;
-  --color-panel: #101013;
-  --color-panel-2: #15151a;
-  --color-line: rgba(255, 255, 255, 0.09);
-  --color-line-strong: rgba(255, 255, 255, 0.16);
-  --color-card: rgba(255, 255, 255, 0.035);
+  /* Surfaces */
+  --color-void: #ffffff;
+  --color-panel: #f6f7f9;
+  --color-panel-2: #eceff4;
+  --color-line: rgba(11, 18, 32, 0.10);
+  --color-line-strong: rgba(11, 18, 32, 0.20);
 
-  /* Text */
-  --color-bright: #ffffff;
-  --color-body: rgba(255, 255, 255, 0.66);
-  --color-dim: rgba(255, 255, 255, 0.44);
-  --color-faint: rgba(255, 255, 255, 0.28);
+  /* Subtle fills, replacing the white alphas the dark theme used */
+  --color-tint: rgba(11, 18, 32, 0.022);
+  --color-tint-2: rgba(11, 18, 32, 0.045);
+  --color-card: var(--color-tint);
 
-  /* Accent — carried over from the previous identity, lifted for dark ground */
-  --color-accent: #5b9dff;
-  --color-accent-deep: #2f6fd0;
-  --color-cyan: #22d3ee;
+  /* Text — "bright" is the strongest text colour, "void" its inverse */
+  --color-bright: #0b1220;
+  --color-body: rgba(11, 18, 32, 0.80);
+  --color-dim: rgba(11, 18, 32, 0.66);
+  --color-faint: rgba(11, 18, 32, 0.62);
+
+  /* Accent — darkened so it stays legible on white */
+  --color-accent: #1a63e0;
+  --color-accent-deep: #0b3fa8;
+  --color-cyan: #0d8fa5;
 
   /* Fonts */
   --font-display: var(--font-space-grotesk), Inter, system-ui, sans-serif;
@@ -38,7 +48,7 @@ body {
 }
 
 ::selection {
-  background: rgba(91, 157, 255, 0.28);
+  background: rgba(26, 99, 224, 0.18);
 }
 
 /* ── scroll reveal ── */
@@ -57,35 +67,37 @@ body {
 
 /* ── gradient text ── */
 .grad {
-  background: linear-gradient(100deg, #5b9dff 0%, #22d3ee 100%);
+  background: linear-gradient(100deg, #1a63e0 0%, #0d8fa5 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-/* ── engineering grid, used sparingly behind key sections ── */
+/* ── engineering grid ── */
 .grid-bg {
   background-image:
-    linear-gradient(to right, rgba(255,255,255,0.045) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255,255,255,0.045) 1px, transparent 1px);
+    linear-gradient(to right, rgba(11, 18, 32, 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(11, 18, 32, 0.045) 1px, transparent 1px);
   background-size: 64px 64px;
 }
 
 /* ── hairline rule with a lit left edge ── */
 .rule {
   height: 1px;
-  background: linear-gradient(to right, rgba(91,157,255,0.55), rgba(255,255,255,0.07) 22%, rgba(255,255,255,0.04));
+  background: linear-gradient(to right, rgba(26, 99, 224, 0.6), rgba(11, 18, 32, 0.14) 22%, rgba(11, 18, 32, 0.07));
 }
 
-/* ── card hover ── */
+/* ── card ── */
 .card {
   background: var(--color-card);
   border: 1px solid var(--color-line);
-  transition: border-color 0.35s ease, background 0.35s ease, transform 0.35s cubic-bezier(0.16,1,0.3,1);
+  transition: border-color 0.35s ease, background 0.35s ease,
+              transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease;
 }
 .card:hover {
   border-color: var(--color-line-strong);
-  background: rgba(255, 255, 255, 0.055);
+  background: var(--color-tint-2);
+  box-shadow: 0 10px 30px rgba(11, 18, 32, 0.06);
 }
 .card-lift:hover { transform: translateY(-2px); }
 
@@ -99,6 +111,6 @@ button:focus-visible {
 
 /* ── scrollbar ── */
 ::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: #0a0a0b; }
-::-webkit-scrollbar-thumb { background: #2c2f36; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--color-accent-deep); }
+::-webkit-scrollbar-track { background: #eceff4; }
+::-webkit-scrollbar-thumb { background: #c3cad6; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-accent); }

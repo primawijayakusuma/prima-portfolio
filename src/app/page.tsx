@@ -114,7 +114,7 @@ function Nav() {
 
         <div className="flex items-center gap-3">
           <a href="#contact"
-            className="hidden sm:inline-flex items-center gap-1.5 bg-bright text-void text-sm font-semibold px-4 py-2 rounded-full hover:bg-white/90 transition-colors">
+            className="hidden sm:inline-flex items-center gap-1.5 bg-bright text-void text-sm font-semibold px-4 py-2 rounded-full hover:opacity-90 transition-colors">
             Contact
           </a>
           <button onClick={() => setOpen(!open)} className="lg:hidden p-2 -mr-2 text-bright"
@@ -198,12 +198,12 @@ function Hero() {
 
           <div {...step(440)} className={`${step(440).className} flex flex-wrap gap-3`}>
             <a href="#terragrow"
-              className="group inline-flex items-center gap-2 bg-bright text-void font-semibold text-sm px-6 py-3.5 rounded-full hover:bg-white/90 transition-colors">
+              className="group inline-flex items-center gap-2 bg-bright text-void font-semibold text-sm px-6 py-3.5 rounded-full hover:opacity-90 transition-colors">
               Explore My Work
               <span className="group-hover:translate-x-0.5 transition-transform"><ArrowUpRight /></span>
             </a>
             <a href="#research"
-              className="inline-flex items-center gap-2 border border-line-strong text-bright font-medium text-sm px-6 py-3.5 rounded-full hover:bg-white/5 transition-colors">
+              className="inline-flex items-center gap-2 border border-line-strong text-bright font-medium text-sm px-6 py-3.5 rounded-full hover:bg-tint-2 transition-colors">
               Research &amp; Publications
             </a>
             <a href="https://www.linkedin.com/in/primawijayakusuma/" target="_blank" rel="noopener noreferrer"
@@ -338,7 +338,7 @@ function Experience() {
           {roles.map((r, i) => (
             <Reveal key={r.title} delay={i * 90}>
               <article className="card card-lift rounded-2xl p-7 md:p-9 grid lg:grid-cols-[auto_1fr_auto] gap-7 lg:gap-10">
-                <div className={`relative w-full lg:w-[132px] h-[132px] rounded-xl overflow-hidden border border-line flex-shrink-0 ${r.contain ? 'bg-white/[0.06]' : 'bg-panel-2'}`}>
+                <div className={`relative w-full lg:w-[132px] h-[132px] rounded-xl overflow-hidden border border-line flex-shrink-0 ${r.contain ? 'bg-tint-2' : 'bg-panel-2'}`}>
                   <Image src={r.img} alt={r.imgAlt} fill sizes="132px"
                     className={r.contain ? 'object-contain p-5' : 'object-cover'} />
                 </div>
@@ -490,7 +490,7 @@ function Work() {
         />
 
         {/* ── FLAGSHIP: TERRAGROW ── */}
-        <div id="terragrow" className="mb-6 rounded-3xl border border-line-strong bg-white/[0.025] overflow-hidden">
+        <div id="terragrow" className="mb-6 rounded-3xl border border-line-strong bg-tint overflow-hidden">
           <div className="p-7 md:p-10 lg:p-12">
             <div className="flex flex-wrap items-center gap-3 mb-6">
               <span className="text-[10px] font-semibold tracking-[0.16em] uppercase text-void bg-accent rounded-full px-2.5 py-1">Flagship</span>
@@ -543,7 +543,7 @@ function Work() {
             </div>
 
             {/* journey */}
-            <div className="rounded-2xl border border-line bg-white/[0.02] p-7 md:p-8 mb-6">
+            <div className="rounded-2xl border border-line bg-tint p-7 md:p-8 mb-6">
               <Eyebrow>Research to product</Eyebrow>
               <ol className="grid sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-7 mt-7">
                 {journey.map(([stage, desc], i) => (
@@ -587,7 +587,7 @@ function Work() {
                   <div className="flex flex-wrap items-center gap-5">
                     <a href="https://www.sciencedirect.com/science/article/pii/S2468067225001026"
                       target="_blank" rel="noopener noreferrer"
-                      className="group inline-flex items-center gap-2 bg-bright text-void font-semibold text-sm px-5 py-3 rounded-full hover:bg-white/90 transition-colors">
+                      className="group inline-flex items-center gap-2 bg-bright text-void font-semibold text-sm px-5 py-3 rounded-full hover:opacity-90 transition-colors">
                       Read the Paper
                       <span className="group-hover:translate-x-0.5 transition-transform"><ArrowUpRight /></span>
                     </a>
@@ -604,7 +604,7 @@ function Work() {
             </div>
 
             {/* poster + recognition */}
-            <div className="grid lg:grid-cols-[1fr_auto] gap-8 items-center rounded-2xl border border-line bg-white/[0.02] p-7 md:p-9">
+            <div className="rounded-2xl border border-line bg-tint p-7 md:p-9">
               <div>
                 <Eyebrow>International Recognition</Eyebrow>
                 <ul className="mt-5 space-y-2.5">
@@ -628,11 +628,19 @@ function Work() {
                   Prototype → Validation → International Recognition → Peer-Reviewed Publication
                 </p>
               </div>
-              <figure className="w-full lg:w-[220px]">
-                <div className="relative aspect-[2384/3373] rounded-xl overflow-hidden border border-line bg-white">
-                  <Image src="/img/tg-poster.jpg" alt="TerraGrow research poster" fill sizes="220px" className="object-contain" />
+              <figure className="mt-9">
+                <div className="relative aspect-[2400/1689] rounded-xl overflow-hidden border border-line bg-white">
+                  <Image src="/img/tg-brochure.jpg" alt="TerraGrow product brochure: product services, about, monitoring dashboard, and contact details"
+                    fill sizes="(max-width: 1024px) 100vw, 1100px" className="object-contain" />
                 </div>
-                <figcaption className="mt-2.5 font-mono text-[10px] uppercase tracking-[0.12em] text-faint">Research poster</figcaption>
+                <figcaption className="mt-3 flex flex-wrap items-center justify-between gap-3">
+                  <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-faint">Product brochure</span>
+                  <a href="/TerraGrow-Brochure.pdf" target="_blank" rel="noopener noreferrer"
+                    className="group inline-flex items-center gap-1.5 font-mono text-[10.5px] uppercase tracking-[0.1em] text-accent hover:text-accent-deep transition-colors">
+                    Open PDF
+                    <span className="group-hover:translate-x-0.5 transition-transform"><ArrowUpRight cls="w-3 h-3" /></span>
+                  </a>
+                </figcaption>
               </figure>
             </div>
           </div>
@@ -709,7 +717,7 @@ function ProductCard({ product: p, delay }: { product: Product; delay: number })
                 <Image src={f.src} alt={f.alt} fill
                   sizes="(max-width: 1024px) 50vw, 300px"
                   className={f.contain ? 'object-contain p-4' : 'object-cover'} />
-                <figcaption className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-void/90 to-transparent px-4 pt-8 pb-3 font-mono text-[9.5px] uppercase tracking-[0.1em] text-bright/80">
+                <figcaption className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/75 to-transparent px-4 pt-8 pb-3 font-mono text-[9.5px] uppercase tracking-[0.1em] text-white/90">
                   {f.cap}
                 </figcaption>
               </figure>
@@ -1064,7 +1072,7 @@ function Recommendations() {
                   &ldquo;{r.quote}&rdquo;
                 </blockquote>
                 <figcaption className="mt-7 pt-6 border-t border-line flex items-center gap-4">
-                  <span aria-hidden className="w-11 h-11 rounded-full border border-line bg-white/[0.06] flex items-center justify-center font-display text-[13px] font-bold text-accent flex-shrink-0">
+                  <span aria-hidden className="w-11 h-11 rounded-full border border-line bg-tint-2 flex items-center justify-center font-display text-[13px] font-bold text-accent flex-shrink-0">
                     {initials(r.name)}
                   </span>
                   <span className="min-w-0">
@@ -1128,7 +1136,7 @@ function BuildWithMe() {
         </Reveal>
 
         <Reveal>
-          <div className="rounded-2xl border border-line-strong bg-white/[0.035] p-8 md:p-12 grid lg:grid-cols-[1fr_auto] gap-8 items-center">
+          <div className="rounded-2xl border border-line-strong bg-tint p-8 md:p-12 grid lg:grid-cols-[1fr_auto] gap-8 items-center">
             <div>
               <h3 className="font-display text-[1.6rem] md:text-[2rem] font-bold tracking-[-0.02em] text-bright mb-4">
                 Have an idea worth building?
@@ -1139,12 +1147,12 @@ function BuildWithMe() {
             </div>
             <div className="flex flex-wrap gap-3 lg:flex-shrink-0">
               <a href="mailto:primawijayakusuma38@gmail.com?subject=Let%E2%80%99s%20build%20something"
-                className="group inline-flex items-center gap-2 bg-bright text-void font-semibold text-sm px-6 py-3.5 rounded-full hover:bg-white/90 transition-colors">
+                className="group inline-flex items-center gap-2 bg-bright text-void font-semibold text-sm px-6 py-3.5 rounded-full hover:opacity-90 transition-colors">
                 Let&rsquo;s Build Something
                 <span className="group-hover:translate-x-0.5 transition-transform"><ArrowUpRight /></span>
               </a>
               <a href="#contact"
-                className="inline-flex items-center border border-line-strong text-bright font-medium text-sm px-6 py-3.5 rounded-full hover:bg-white/5 transition-colors">
+                className="inline-flex items-center border border-line-strong text-bright font-medium text-sm px-6 py-3.5 rounded-full hover:bg-tint-2 transition-colors">
                 Start a Conversation
               </a>
             </div>
