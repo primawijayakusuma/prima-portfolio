@@ -246,13 +246,6 @@ function Hero() {
 // ─── 02 ABOUT ─────────────────────────────────────────────────────────────────
 
 function About() {
-  const paras = [
-    'I am an engineer and innovation practitioner focused on turning scientific and engineering ideas into technologies that can be built, tested, and developed toward real-world products.',
-    'My work spans the early stages of technology development — problem exploration, engineering design, prototyping, validation, and product development. With a background in electronics, my interests run through wireless systems, RF engineering, intelligent sensing, and AI, applied across digital health, biomedical systems, environmental monitoring, and precision agriculture.',
-    'What interests me most is bridging research and product development. That work has been recognized with Gold Medals at international invention exhibitions and a Special Award from the Korea Invention Promotion Association (KIPA), and published across Elsevier journals, IEEE Xplore, and Scopus-indexed proceedings.',
-    'Beyond engineering, I contribute to sustainability-driven collaboration through SDSN Indonesia while pursuing my Master\u2019s degree at Beijing Institute of Technology.',
-  ];
-
   return (
     <section id="about" className="py-24 border-b border-line">
       <div className="max-w-[1200px] mx-auto px-6">
@@ -260,16 +253,26 @@ function About() {
 
         <div className="grid lg:grid-cols-[1.15fr_0.85fr] gap-12 lg:gap-16 items-start">
           <Reveal>
-            <div className="grid sm:grid-cols-2 gap-x-10 gap-y-6">
-              {paras.map((p, i) => (
-                <p key={i} className={`text-[0.95rem] leading-[1.75] text-body ${i === 0 ? 'sm:col-span-2 text-[1.05rem] text-bright/85' : ''}`}>
-                  {p}
-                </p>
-              ))}
+            <div className="space-y-6 max-w-2xl">
+              <p className="text-[1.06rem] leading-[1.65] text-bright/85">
+                I am an engineer and technology builder working at the intersection of engineering, intelligent systems, product development, and innovation.
+              </p>
+              <p className="text-[0.95rem] leading-[1.75] text-body">
+                I work with scientific and technical ideas from early exploration through engineering design, prototyping, validation, and product development — particularly across AIoT, smart electronics, intelligent sensing, wireless systems, and deep tech.
+              </p>
+              <p className="text-[0.95rem] leading-[1.75] text-body">
+                My focus is on building{' '}
+                <strong className="font-semibold text-bright">human-centered, intelligent, and sustainable technologies designed for meaningful real-world impact.</strong>
+              </p>
+              <p className="text-[0.95rem] leading-[1.75] text-body">
+                I am open to working alongside founders, research teams, and technology companies as a{' '}
+                <strong className="font-semibold text-bright">consultant, technology advisor, CIO, product manager, or technical collaborator</strong>, helping transform promising ideas into technologies that can be built, validated, and taken closer to market.
+              </p>
             </div>
-            <div className="rule mt-10 mb-6" />
-            <p className="text-[0.95rem] leading-[1.75] text-body max-w-2xl">
-              My long-term direction sits at the intersection of engineering, technology development, and innovation management — turning ideas into technologies, and technologies into products.
+
+            <div className="rule mt-10 mb-7" />
+            <p className="font-display text-[1.15rem] md:text-[1.35rem] font-bold leading-snug tracking-[-0.02em] text-bright">
+              From idea to engineering. <span className="grad">From engineering to impact.</span>
             </p>
           </Reveal>
 
