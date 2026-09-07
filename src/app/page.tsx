@@ -248,15 +248,15 @@ function Hero() {
 function About() {
   const paras = [
     'I am an engineer and innovation practitioner focused on turning scientific and engineering ideas into technologies that can be built, tested, and developed toward real-world products.',
-    'My work spans the early stages of technology development, from problem exploration and engineering design to prototyping, validation, and product development. With a background in electronics, my interests include wireless systems, RF engineering, intelligent sensing, AI, and human-centered technologies, with applications across digital health, biomedical systems, environmental monitoring, and precision agriculture.',
-    'I am particularly interested in bridging research and product development — bringing together technical ideas, multidisciplinary collaboration, and practical requirements to transform promising concepts into functional and validated solutions.',
-    'Throughout my journey, I have been involved in applied research and engineering innovation, receiving Gold Medals at international invention exhibitions as well as a Special Award from the Korea Invention Promotion Association (KIPA). I have also contributed to international publications across Elsevier journals, IEEE Xplore, Scopus-indexed proceedings, and other peer-reviewed venues.',
-    'Beyond engineering, I contribute to sustainability-driven collaboration through SDSN Indonesia while pursuing my Master’s degree at Beijing Institute of Technology.',
+    'My work spans the early stages of technology development — problem exploration, engineering design, prototyping, validation, and product development. With a background in electronics, my interests run through wireless systems, RF engineering, intelligent sensing, and AI, applied across digital health, biomedical systems, environmental monitoring, and precision agriculture.',
+    'What interests me most is bridging research and product development. That work has been recognized with Gold Medals at international invention exhibitions and a Special Award from the Korea Invention Promotion Association (KIPA), and published across Elsevier journals, IEEE Xplore, and Scopus-indexed proceedings.',
+    'Beyond engineering, I contribute to sustainability-driven collaboration through SDSN Indonesia while pursuing my Master\u2019s degree at Beijing Institute of Technology.',
   ];
+
   return (
     <section id="about" className="py-24 border-b border-line">
       <div className="max-w-[1200px] mx-auto px-6">
-        <SectionHeader num="03" eyebrow="About" title="Engineering ideas into real-world technology." />
+        <SectionHeader num="02" eyebrow="About" title="Engineering ideas into real-world technology." />
 
         <div className="grid lg:grid-cols-[1.15fr_0.85fr] gap-12 lg:gap-16 items-start">
           <Reveal>
@@ -269,7 +269,7 @@ function About() {
             </div>
             <div className="rule mt-10 mb-6" />
             <p className="text-[0.95rem] leading-[1.75] text-body max-w-2xl">
-              My long-term direction lies at the intersection of engineering, technology development, and innovation management — helping turn ideas into technologies, and technologies into products that create meaningful impact.
+              My long-term direction sits at the intersection of engineering, technology development, and innovation management — turning ideas into technologies, and technologies into products.
             </p>
           </Reveal>
 
@@ -328,7 +328,7 @@ function Experience() {
     <section id="experience" className="py-24 bg-panel border-b border-line">
       <div className="max-w-[1200px] mx-auto px-6">
         <SectionHeader
-          num="04"
+          num="05"
           eyebrow="Experience"
           title="Beyond the Lab"
           sub="Engineering, innovation, entrepreneurship, and collaboration."
@@ -447,7 +447,6 @@ function Work() {
       bullets: ['Simple motorised tracking mechanism', 'Low-cost, environmentally friendly materials', 'Straightforward to deploy and operate'],
       figures: [
         { src: '/img/muadips-poster.jpg', alt: 'MUADIPS research poster', cap: 'Research poster', contain: true },
-        { src: '/img/muadips-diagram.png', alt: 'MUADIPS sun-tracking system diagram', cap: 'Tracking mechanism', contain: true },
       ],
       note: 'Built for a collaborative solar automation and controller project in 2024.',
     },
@@ -484,7 +483,7 @@ function Work() {
 
       <div className="relative max-w-[1200px] mx-auto px-6">
         <SectionHeader
-          num="02"
+          num="04"
           eyebrow="Products &amp; Systems"
           title="What I&rsquo;ve built."
           sub="One flagship engineering case study, two ventures under development, and the systems that came before them."
@@ -791,7 +790,7 @@ function Research() {
     <section id="research" className="py-24 bg-panel border-b border-line">
       <div className="max-w-[1200px] mx-auto px-6">
         <SectionHeader
-          num="05"
+          num="06"
           eyebrow="Research &amp; Publications"
           title="Research &amp; Publications"
           sub="Peer-reviewed work across sensing, electronics, wireless systems, intelligent systems, and engineering applications."
@@ -891,7 +890,7 @@ function Recognition() {
     },
     {
       award: 'The Best International Inventions', org: 'Korea Invention Promotion Association (KIPA)', country: 'Korea', year: '2023',
-      project: 'TerraGrow', img: '/img/rec-kipa-medal.jpg',
+      project: 'TerraGrow', img: '/img/rec-kipa.jpg',
       note: '',
     },
     {
@@ -910,7 +909,7 @@ function Recognition() {
     <section id="recognition" className="py-24 border-b border-line">
       <div className="max-w-[1200px] mx-auto px-6">
         <SectionHeader
-          num="06"
+          num="07"
           eyebrow="Recognition"
           title="Engineering and innovation recognized internationally."
           sub="Progression across three dimensions of the work — invention, research, and venture building."
@@ -986,7 +985,7 @@ function Education() {
   return (
     <section id="education" className="py-24 bg-panel border-b border-line">
       <div className="max-w-[1200px] mx-auto px-6">
-        <SectionHeader num="07" eyebrow="Education" title="Education" />
+        <SectionHeader num="08" eyebrow="Education" title="Education" />
 
         <div className="grid md:grid-cols-2 gap-5 mb-6">
           {main.map((e, i) => (
@@ -1055,7 +1054,7 @@ function Recommendations() {
   return (
     <section className="py-24 border-b border-line">
       <div className="max-w-[1200px] mx-auto px-6">
-        <SectionHeader num="08" eyebrow="Selected Recommendations" title="What collaborators say." />
+        <SectionHeader num="09" eyebrow="Selected Recommendations" title="What collaborators say." />
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
           {recs.map((r, i) => (
@@ -1101,7 +1100,7 @@ function BuildWithMe() {
       <div className="relative max-w-[1200px] mx-auto px-6">
         <Reveal className="max-w-3xl mb-14">
           <div className="flex items-center gap-3 mb-5">
-            <span className="font-mono text-[11px] text-faint tabular-nums">09</span>
+            <span className="font-mono text-[11px] text-faint tabular-nums">03</span>
             <span className="h-px w-6 bg-line-strong" />
             <Eyebrow>Build with me</Eyebrow>
           </div>
@@ -1220,14 +1219,14 @@ export default function Home() {
       <Nav />
       <main>
         <Hero />
-        <Work />
         <About />
+        <BuildWithMe />
+        <Work />
         <Experience />
         <Research />
         <Recognition />
         <Education />
         <Recommendations />
-        <BuildWithMe />
       </main>
       <Contact />
     </>
