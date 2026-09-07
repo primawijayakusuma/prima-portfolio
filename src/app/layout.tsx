@@ -1,36 +1,56 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-space-grotesk",
   subsets: ["latin"],
+  display: "swap",
 });
+
+const SITE = "https://primawijayakusuma.vercel.app";
 
 export const metadata: Metadata = {
-  title: "Prima Wijayakusuma — Innovation Practitioner and Technopreneur",
+  metadataBase: new URL(SITE),
+  title: "Prima Wijayakusuma — Engineer & Innovation Practitioner",
   description:
-    "Prima Wijayakusuma is an Innovation Practitioner and Technopreneur working in engineering research, electronics, electromagnetic applications, and smart technology systems.",
+    "Engineer and innovation practitioner working across electronics, wireless systems, intelligent sensing, AI, biomedical technology, and product development.",
   keywords: [
     "Prima Wijayakusuma",
+    "engineer",
     "innovation practitioner",
-    "technopreneur",
-    "IoT",
+    "technology builder",
+    "AIoT",
     "smart electronics",
+    "intelligent sensing",
+    "deep tech",
     "TerraGrow",
+    "NOVA",
+    "Medivue",
     "SEHATIN",
+    "HardwareX",
     "Beijing Institute of Technology",
   ],
+  authors: [{ name: "Prima Wijayakusuma", url: SITE }],
   openGraph: {
-    title: "Prima Wijayakusuma — Innovation Practitioner and Technopreneur",
+    title: "Prima Wijayakusuma — Engineer & Innovation Practitioner",
     description:
-      "Engineering research, smart electronics, and sustainable innovation. Awarded by KIPA and MINDS; published in IEEE Xplore and HardwareX.",
+      "Turning scientific and engineering ideas into technologies that can be built, tested, validated, and developed toward real-world products.",
+    url: SITE,
+    siteName: "Prima Wijayakusuma",
     type: "profile",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Prima Wijayakusuma — Engineer & Innovation Practitioner",
+    description:
+      "Engineer, innovation practitioner, and technology builder working across AIoT, smart electronics, intelligent sensing, and deep tech.",
   },
 };
 
@@ -42,9 +62,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      className={`${inter.variable} ${spaceGrotesk.variable} antialiased`}
     >
-      <body className="font-sans">{children}</body>
+      <body>{children}</body>
     </html>
   );
 }

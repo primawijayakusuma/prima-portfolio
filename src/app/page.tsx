@@ -5,7 +5,7 @@ import Image from 'next/image';
 
 // ─── HOOK ─────────────────────────────────────────────────────────────────────
 
-function useReveal(threshold = 0.12) {
+function useReveal(threshold = 0.1) {
   const ref = useRef<HTMLElement>(null);
   const [visible, setVisible] = useState(false);
   useEffect(() => {
@@ -23,37 +23,6 @@ function useReveal(threshold = 0.12) {
 
 // ─── PRIMITIVES ───────────────────────────────────────────────────────────────
 
-function Eyebrow({ children, on = 'light' }: { children: React.ReactNode; on?: 'light' | 'dark' }) {
-  return (
-    <div className={`inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 mb-5 ${
-      on === 'dark' ? 'bg-white/10 border border-white/15' : 'bg-accent-soft'
-    }`}>
-      <span className={`w-1.5 h-1.5 rounded-full ${on === 'dark' ? 'bg-cyan' : 'bg-accent'}`} />
-      <span className={`text-[10px] font-bold tracking-[1.3px] uppercase ${on === 'dark' ? 'text-cyan' : 'text-accent-deep'}`}>
-        {children}
-      </span>
-    </div>
-  );
-}
-
-function SectionHead({
-  eyebrow, title, sub, on = 'light', center = true,
-}: {
-  eyebrow: string; title: React.ReactNode; sub?: React.ReactNode; on?: 'light' | 'dark'; center?: boolean;
-}) {
-  const { ref, visible } = useReveal();
-  return (
-    <div ref={ref as React.RefObject<HTMLDivElement>}
-      className={`reveal ${visible ? 'visible' : ''} max-w-2xl mb-12 ${center ? 'mx-auto text-center' : ''}`}>
-      <Eyebrow on={on}>{eyebrow}</Eyebrow>
-      <h2 className={`text-[2.1rem] md:text-[2.6rem] font-medium tracking-[-1px] leading-[1.12] mb-4 ${on === 'dark' ? 'text-on-dark' : 'text-ink'}`}>
-        {title}
-      </h2>
-      {sub && <p className={`text-[1.02rem] leading-relaxed ${on === 'dark' ? 'text-on-dark-muted' : 'text-slate-body'}`}>{sub}</p>}
-    </div>
-  );
-}
-
 function Reveal({ children, delay = 0, className = '' }: { children: React.ReactNode; delay?: number; className?: string }) {
   const { ref, visible } = useReveal();
   return (
@@ -65,8 +34,44 @@ function Reveal({ children, delay = 0, className = '' }: { children: React.React
   );
 }
 
+function Eyebrow({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="text-[10px] font-semibold tracking-[0.18em] uppercase text-accent">
+      {children}
+    </span>
+  );
+}
+
+function SectionHeader({
+  num, eyebrow, title, sub, align = 'left',
+}: {
+  num: string; eyebrow: string; title: React.ReactNode; sub?: React.ReactNode; align?: 'left' | 'center';
+}) {
+  return (
+    <Reveal className={`mb-14 ${align === 'center' ? 'text-center mx-auto max-w-2xl' : 'max-w-3xl'}`}>
+      <div className={`flex items-center gap-3 mb-5 ${align === 'center' ? 'justify-center' : ''}`}>
+        <span className="font-mono text-[11px] text-faint tabular-nums">{num}</span>
+        <span className="h-px w-6 bg-line-strong" />
+        <Eyebrow>{eyebrow}</Eyebrow>
+      </div>
+      <h2 className="font-display text-[2rem] md:text-[2.7rem] font-bold leading-[1.08] tracking-[-0.02em] text-bright">
+        {title}
+      </h2>
+      {sub && <p className="mt-5 text-[1.02rem] leading-relaxed text-body max-w-2xl">{sub}</p>}
+    </Reveal>
+  );
+}
+
+function Tag({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="text-[11px] font-medium text-body border border-line rounded-full px-2.5 py-1 whitespace-nowrap">
+      {children}
+    </span>
+  );
+}
+
 const ArrowUpRight = ({ cls = 'w-3.5 h-3.5' }: { cls?: string }) => (
-  <svg className={cls} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+  <svg className={cls} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden>
     <path strokeLinecap="round" strokeLinejoin="round" d="M7 17L17 7M17 7H9m8 0v8" />
   </svg>
 );
@@ -84,240 +89,276 @@ function Nav() {
 
   const links = [
     { label: 'About', href: '#about' },
-    { label: 'Education', href: '#education' },
+    { label: 'Experience', href: '#experience' },
+    { label: 'Work', href: '#terragrow' },
     { label: 'Research', href: '#research' },
-    { label: 'Awards', href: '#awards' },
-    { label: 'Projects', href: '#projects' },
-    { label: 'Publications', href: '#publications' },
+    { label: 'Recognition', href: '#recognition' },
   ];
 
   return (
-    <nav className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${
-      scrolled ? 'bg-white/92 backdrop-blur border-b border-hairline' : 'bg-transparent'
+    <header className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${
+      scrolled ? 'bg-void/85 backdrop-blur-md border-b border-line' : 'border-b border-transparent'
     }`}>
-      <div className="max-w-[1180px] mx-auto px-6 h-16 flex items-center justify-between">
-        <a href="#" className="font-semibold text-[0.95rem] tracking-[-0.3px] text-ink">
+      <nav className="max-w-[1200px] mx-auto px-6 h-16 flex items-center justify-between" aria-label="Main">
+        <a href="#top" className="font-display font-bold text-[0.95rem] tracking-[-0.01em] text-bright">
           Prima Wijayakusuma
         </a>
-        <div className="hidden lg:flex items-center gap-7">
+
+        <div className="hidden lg:flex items-center gap-8">
           {links.map(l => (
-            <a key={l.label} href={l.href} className="text-sm text-slate-body hover:text-ink transition-colors">{l.label}</a>
+            <a key={l.label} href={l.href} className="text-sm text-body hover:text-bright transition-colors">
+              {l.label}
+            </a>
           ))}
         </div>
+
         <div className="flex items-center gap-3">
           <a href="#contact"
-            className="hidden sm:inline-block bg-ink text-white text-sm font-medium px-5 py-2.5 rounded-full hover:bg-graphite transition-colors">
-            Get in touch
+            className="hidden sm:inline-flex items-center gap-1.5 bg-bright text-void text-sm font-semibold px-4 py-2 rounded-full hover:bg-white/90 transition-colors">
+            Contact
           </a>
-          <button onClick={() => setOpen(!open)} className="lg:hidden p-1.5" aria-label="Menu">
-            <svg className="w-5 h-5 text-ink" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <button onClick={() => setOpen(!open)} className="lg:hidden p-2 -mr-2 text-bright"
+            aria-label={open ? 'Close menu' : 'Open menu'} aria-expanded={open}>
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
               {open
-                ? <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                : <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />}
+                ? <path strokeLinecap="round" d="M6 18L18 6M6 6l12 12" />
+                : <path strokeLinecap="round" d="M3.75 7h16.5M3.75 12h16.5m-16.5 5h16.5" />}
             </svg>
           </button>
         </div>
-      </div>
+      </nav>
+
       {open && (
-        <div className="lg:hidden bg-white border-t border-hairline px-6 py-4 flex flex-col gap-4">
+        <div className="lg:hidden bg-panel border-t border-line px-6 py-5 flex flex-col gap-4">
           {links.map(l => (
-            <a key={l.label} href={l.href} onClick={() => setOpen(false)} className="text-sm text-slate-body">{l.label}</a>
+            <a key={l.label} href={l.href} onClick={() => setOpen(false)} className="text-sm text-body">{l.label}</a>
           ))}
           <a href="#contact" onClick={() => setOpen(false)}
-            className="bg-ink text-white text-sm font-medium text-center py-3 rounded-full">Get in touch</a>
+            className="bg-bright text-void text-sm font-semibold text-center py-3 rounded-full mt-1">Contact</a>
         </div>
       )}
-    </nav>
+    </header>
   );
 }
 
-// ─── HERO ─────────────────────────────────────────────────────────────────────
+// ─── 01 HERO ──────────────────────────────────────────────────────────────────
 
 function Hero() {
   const [shown, setShown] = useState(false);
-  useEffect(() => { const t = setTimeout(() => setShown(true), 80); return () => clearTimeout(t); }, []);
-  const anim = (d: number) =>
-    `transition-all duration-700 ${shown ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`
-    + ` [transition-delay:${d}ms]`;
+  useEffect(() => { const t = setTimeout(() => setShown(true), 60); return () => clearTimeout(t); }, []);
+  const step = (d: number) => ({
+    className: `transition-all duration-700 ${shown ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`,
+    style: { transitionDelay: `${d}ms` },
+  });
 
   return (
-    <section className="relative overflow-hidden bg-ink pt-16">
+    <section id="top" className="relative overflow-hidden border-b border-line">
+      <div className="absolute inset-0 grid-bg opacity-60" aria-hidden />
       <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute -top-[18%] -left-[12%] w-[560px] h-[560px] rounded-full bg-accent/20 blur-[130px]" />
-        <div className="absolute bottom-[-25%] right-[-8%] w-[460px] h-[460px] rounded-full bg-cyan/15 blur-[120px]" />
+        <div className="absolute -top-40 -left-32 w-[620px] h-[620px] rounded-full bg-accent/10 blur-[150px]" />
+        <div className="absolute bottom-[-30%] right-[-10%] w-[520px] h-[520px] rounded-full bg-cyan/[0.07] blur-[130px]" />
       </div>
 
-      <div className="relative max-w-[1180px] mx-auto px-6 py-20 md:py-28 grid lg:grid-cols-[1.15fr_0.85fr] gap-14 items-center">
+      <div className="relative max-w-[1200px] mx-auto px-6 pt-32 pb-20 md:pt-40 md:pb-28 grid lg:grid-cols-[1.35fr_0.65fr] gap-14 lg:gap-16 items-center">
         <div>
-          <div className={anim(0)} style={{ transitionDelay: '0ms' }}>
-            <div className="inline-flex items-center gap-2 bg-white/10 border border-white/15 rounded-full px-3.5 py-1.5 mb-7">
-              <span className="w-1.5 h-1.5 rounded-full bg-cyan animate-pulse" />
-              <span className="text-cyan text-[10px] font-bold tracking-[1.3px] uppercase">Jakarta, ID</span>
+          <div {...step(0)}>
+            <div className="flex items-center gap-3 mb-7">
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="absolute inline-flex h-full w-full rounded-full bg-cyan opacity-70 animate-ping" />
+                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-cyan" />
+              </span>
+              <Eyebrow>Jakarta, ID · Beijing, CN</Eyebrow>
             </div>
           </div>
 
-          <h1 className={`text-[clamp(2.6rem,6vw,4.2rem)] font-medium text-white leading-[1.04] tracking-[-2px] mb-5 ${anim(100)}`}
-            style={{ transitionDelay: '100ms' }}>
-            Prima<br /><span className="grad-text">Wijayakusuma</span>
+          <h1 {...step(80)} className={`${step(80).className} font-display text-[clamp(2.4rem,5.6vw,4.1rem)] font-bold leading-[1.02] tracking-[-0.03em] text-bright mb-5`}>
+            Prima Wijayakusuma
           </h1>
 
-          <p className={`text-lg text-on-dark-muted mb-8 ${anim(200)}`} style={{ transitionDelay: '200ms' }}>
-            Innovation Practitioner and Technopreneur
+          <p {...step(160)} className={`${step(160).className} font-display text-[0.95rem] md:text-base font-medium tracking-[0.04em] text-accent mb-8`}>
+            Engineer · Innovation Practitioner · Technology Builder
           </p>
 
-          <div className={`flex flex-wrap gap-3 mb-10 ${anim(300)}`} style={{ transitionDelay: '300ms' }}>
-            <a href="#projects"
-              className="bg-white text-ink font-semibold text-sm px-6 py-3.5 rounded-full hover:bg-white/90 transition-colors">
-              View projects
+          <p {...step(240)} className={`${step(240).className} text-[1.1rem] md:text-[1.28rem] leading-[1.5] text-bright/90 max-w-[42rem] mb-6`}>
+            Turning scientific and engineering ideas into technologies that can be built, tested, validated, and developed toward real-world products.
+          </p>
+
+          <p {...step(320)} className={`${step(320).className} text-[0.94rem] leading-relaxed text-dim max-w-[38rem] mb-8`}>
+            Working across electronics, RF and wireless systems, intelligent sensing, AI, digital health, biomedical technology, environmental monitoring, and precision agriculture.
+          </p>
+
+          <div {...step(380)} className={`${step(380).className} flex flex-wrap items-center gap-x-2.5 gap-y-2 mb-10`}>
+            {['AIoT', 'Smart Electronics', 'Intelligent Sensing', 'Deep Tech'].map((t, i) => (
+              <span key={t} className="flex items-center gap-2.5">
+                {i > 0 && <span className="text-faint text-xs">·</span>}
+                <span className="font-mono text-[11px] tracking-wide text-body">{t}</span>
+              </span>
+            ))}
+          </div>
+
+          <div {...step(440)} className={`${step(440).className} flex flex-wrap gap-3`}>
+            <a href="#terragrow"
+              className="group inline-flex items-center gap-2 bg-bright text-void font-semibold text-sm px-6 py-3.5 rounded-full hover:bg-white/90 transition-colors">
+              Explore My Work
+              <span className="group-hover:translate-x-0.5 transition-transform"><ArrowUpRight /></span>
+            </a>
+            <a href="#research"
+              className="inline-flex items-center gap-2 border border-line-strong text-bright font-medium text-sm px-6 py-3.5 rounded-full hover:bg-white/5 transition-colors">
+              Research &amp; Publications
             </a>
             <a href="https://www.linkedin.com/in/primawijayakusuma/" target="_blank" rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 border border-white/25 text-white font-medium text-sm px-6 py-3.5 rounded-full hover:border-white/50 hover:bg-white/5 transition-all">
-              LinkedIn <ArrowUpRight />
+              className="inline-flex items-center gap-1.5 text-body font-medium text-sm px-4 py-3.5 hover:text-bright transition-colors">
+              LinkedIn <ArrowUpRight cls="w-3 h-3" />
             </a>
           </div>
-
-          <div className={`flex flex-wrap gap-x-8 gap-y-3 ${anim(400)}`} style={{ transitionDelay: '400ms' }}>
-            {[
-              ['2', 'Gold medals'],
-              ['5', 'Publications'],
-              ['2', 'Registered IP'],
-            ].map(([n, l]) => (
-              <div key={l}>
-                <div className="text-2xl font-medium text-white tracking-[-0.5px]">{n}</div>
-                <div className="text-[11px] text-on-dark-muted uppercase tracking-wider">{l}</div>
-              </div>
-            ))}
-          </div>
         </div>
 
-        <div className={`flex justify-center lg:justify-end ${anim(300)}`} style={{ transitionDelay: '250ms' }}>
-          <div className="relative">
-            <div className="absolute -inset-3 rounded-[2rem] bg-gradient-to-br from-accent/30 to-cyan/20 blur-2xl" aria-hidden />
-            <div className="relative w-[260px] sm:w-[320px] aspect-[3/4] rounded-[1.6rem] overflow-hidden border border-white/15">
-              <Image src="/img/portrait.jpg" alt="Prima Wijayakusuma" fill sizes="320px" className="object-cover" priority />
+        <div {...step(300)} className={`${step(300).className} flex lg:justify-end`}>
+          <figure className="relative w-full max-w-[300px]">
+            <div className="absolute -inset-px rounded-2xl bg-gradient-to-b from-white/15 to-transparent" aria-hidden />
+            <div className="relative aspect-[3/4] rounded-2xl overflow-hidden bg-panel-2">
+              <Image src="/img/hero-portrait.jpg" alt="Portrait of Prima Wijayakusuma"
+                fill sizes="(max-width: 1024px) 60vw, 300px" className="object-cover" priority />
             </div>
-          </div>
+          </figure>
+        </div>
+      </div>
+
+      {/* Secondary evidence strip — subordinate to the positioning above */}
+      <div className="relative border-t border-line">
+        <div className="max-w-[1200px] mx-auto px-6 py-6 flex flex-wrap gap-x-10 gap-y-4">
+          {[
+            ['Peer-reviewed publications', '5'],
+            ['International gold medals', '2'],
+            ['Registered intellectual property', '2'],
+          ].map(([label, n]) => (
+            <div key={label} className="flex items-baseline gap-2.5">
+              <span className="font-display text-sm font-bold text-bright tabular-nums">{n}</span>
+              <span className="text-[11px] uppercase tracking-[0.12em] text-faint">{label}</span>
+            </div>
+          ))}
         </div>
       </div>
     </section>
   );
 }
 
-// ─── ABOUT ────────────────────────────────────────────────────────────────────
+// ─── 02 ABOUT ─────────────────────────────────────────────────────────────────
 
 function About() {
+  const paras = [
+    'I am an engineer and innovation practitioner focused on turning scientific and engineering ideas into technologies that can be built, tested, and developed toward real-world products.',
+    'My work spans the early stages of technology development, from problem exploration and engineering design to prototyping, validation, and product development. With a background in electronics, my interests include wireless systems, RF engineering, intelligent sensing, AI, and human-centered technologies, with applications across digital health, biomedical systems, environmental monitoring, and precision agriculture.',
+    'I am particularly interested in bridging research and product development — bringing together technical ideas, multidisciplinary collaboration, and practical requirements to transform promising concepts into functional and validated solutions.',
+    'Throughout my journey, I have been involved in applied research and engineering innovation, receiving Gold Medals at international invention exhibitions as well as a Special Award from the Korea Invention Promotion Association (KIPA). I have also contributed to international publications across Elsevier journals, IEEE Xplore, Scopus-indexed proceedings, and other peer-reviewed venues.',
+    'Beyond engineering, I contribute to sustainability-driven collaboration through SDSN Indonesia while pursuing my Master’s degree at Beijing Institute of Technology.',
+  ];
   return (
-    <section id="about" className="py-20 bg-white">
-      <div className="max-w-[1180px] mx-auto px-6">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+    <section id="about" className="py-24 border-b border-line">
+      <div className="max-w-[1200px] mx-auto px-6">
+        <SectionHeader num="02" eyebrow="About" title="Engineering ideas into real-world technology." />
+
+        <div className="grid lg:grid-cols-[1.15fr_0.85fr] gap-12 lg:gap-16 items-start">
           <Reveal>
-            <div className="rounded-2xl overflow-hidden border border-hairline">
-              <Image src="/img/about-booth.jpg" alt="Prima presenting his work at an exhibition"
-                width={1200} height={675} sizes="(max-width:1024px) 100vw, 560px" className="w-full h-auto" />
+            <div className="grid sm:grid-cols-2 gap-x-10 gap-y-6">
+              {paras.map((p, i) => (
+                <p key={i} className={`text-[0.95rem] leading-[1.75] text-body ${i === 0 ? 'sm:col-span-2 text-[1.05rem] text-bright/85' : ''}`}>
+                  {p}
+                </p>
+              ))}
             </div>
+            <div className="rule mt-10 mb-6" />
+            <p className="text-[0.95rem] leading-[1.75] text-body max-w-2xl">
+              My long-term direction lies at the intersection of engineering, technology development, and innovation management — helping turn ideas into technologies, and technologies into products that create meaningful impact.
+            </p>
           </Reveal>
-          <Reveal delay={100}>
-            <Eyebrow>Hello World!</Eyebrow>
-            <h2 className="text-[2rem] md:text-[2.4rem] font-medium tracking-[-1px] leading-[1.15] mb-6 text-ink">
-              I am <span className="grad-text">Prima Wijayakusuma</span>
-            </h2>
-            <div className="space-y-4 text-[0.98rem] leading-relaxed text-slate-body">
-              <p>
-                Prima Wijayakusuma is an Innovation Practitioner and Technopreneur with experience in engineering research, electronics, electromagnetic applications, and smart technology systems.
-              </p>
-              <p>
-                His work focuses on transforming technical ideas into practical and impactful solutions, particularly in Smart Electronics Innovation, sustainable innovation, and electromagnetic applications for smart agriculture and health.
-              </p>
-              <p>
-                He has received multiple international awards in innovation and research, including two gold medals, one silver medal, one bronze medal, and a special innovation award from the Korea Invention Promotion Association (KIPA).
-              </p>
-            </div>
-          </Reveal>
-        </div>
-      </div>
-    </section>
-  );
-}
 
-// ─── EDUCATION ────────────────────────────────────────────────────────────────
-
-function Education() {
-  const items = [
-    {
-      period: '2025 – Present', school: 'Beijing Institute of Technology',
-      lines: ['Admitted on Master Program', 'School of Integrated Circuits and Electronics Science'],
-    },
-    {
-      period: '2021 – 2025', school: 'Mercu Buana University',
-      lines: ['Bachelor of Engineering (Electrical Engineering)', 'Summa Cum Laude', 'Best Graduate Class of 2025'],
-    },
-    {
-      period: '2023', school: 'Beijing Institute of Technology',
-      lines: ['Electronics Science and Technology', 'School of Integrated Circuits and Electronics Science', 'Exchange Programme 2023 Spring Semester'],
-    },
-  ];
-  return (
-    <section id="education" className="py-20 bg-surface">
-      <div className="max-w-[1180px] mx-auto px-6">
-        <SectionHead eyebrow="My Education" title="Where the groundwork was laid." />
-        <div className="max-w-3xl mx-auto">
-          {items.map((it, i) => (
-            <Reveal key={it.period + it.school} delay={i * 90}>
-              <div className="grid sm:grid-cols-[150px_1fr] gap-4 sm:gap-8 py-7 border-t border-hairline first:border-t-0">
-                <div className="text-sm font-semibold text-accent-deep pt-0.5">{it.period}</div>
-                <div>
-                  <h3 className="text-lg font-semibold text-ink mb-2">{it.school}</h3>
-                  <ul className="space-y-1">
-                    {it.lines.map(l => (
-                      <li key={l} className="text-sm text-slate-body leading-relaxed">{l}</li>
-                    ))}
-                  </ul>
-                </div>
+          <Reveal delay={120}>
+            <figure>
+              <div className="relative aspect-[3/2] rounded-xl overflow-hidden border border-line bg-panel-2">
+                <Image src="/img/about-research.jpg" alt="Prima presenting engineering research at an exhibition"
+                  fill sizes="(max-width: 1024px) 100vw, 420px" className="object-cover" />
               </div>
-            </Reveal>
-          ))}
+              <figcaption className="mt-3 font-mono text-[11px] text-faint">
+                Presenting applied research at an international exhibition
+              </figcaption>
+            </figure>
+          </Reveal>
         </div>
       </div>
     </section>
   );
 }
 
-// ─── RESEARCH & INNOVATION ────────────────────────────────────────────────────
+// ─── 03 EXPERIENCE ────────────────────────────────────────────────────────────
 
-function Research() {
-  const items = [
+function Experience() {
+  const roles = [
     {
-      year: '2023', title: 'International Research Collaborations',
-      org: 'Amur State University, Russia', img: '/img/research-amsu.jpg',
-      body: 'In 2023, I received an invitation from Amur State University (AMSU), Russia, to collaborate on aerospace research, with funding support from AMSU. This opportunity arose from my research on Inertial Navigation Systems and Kalman Filter Approaching, leading to an international partnership for further innovation in the field',
+      title: 'Assistant Network Manager',
+      org: 'UN Sustainable Development Solutions Network Indonesia',
+      period: 'Mar 2026 — Present',
+      place: 'Indonesia / Remote',
+      body: [
+        'I support network coordination, member engagement, strategic communications, and sustainability-driven collaboration across SDSN Indonesia. The role involves connecting universities, research institutions, and other stakeholders to strengthen initiatives supporting the Sustainable Development Goals in Indonesia.',
+        'I also contribute to partnership development, institutional engagement, review processes, and the implementation of collaborative programs across the network.',
+      ],
+      tags: ['Sustainability', 'Network Development', 'Partnerships', 'Innovation', 'SDGs'],
+      img: '/img/role-sdsn.jpg',
+      imgAlt: 'Prima at an SDGs centre',
     },
     {
-      year: '2024', title: 'International Conference Committee',
-      org: 'IEEE Indonesia Sections 2023 Committee', img: '/img/research-ieee.jpg',
-      body: 'In 2023, I served as a committee member for the IEEE Indonesia Sections, where I played an active role in organizing and coordinating events. I contributed to the success of key activities, in collaboration with the IEEE Antennas and Propagation Society and the IEEE Indonesia Section. My involvement also included supporting the overall management and ensuring the smooth execution of these prestigious events.',
-    },
-    {
-      year: '2024', title: 'DIKTI Research Grant Recipient',
-      org: 'Directorate General of Higher Education, Indonesia', img: '/img/research-readcharge.jpg',
-      body: 'In 2024, I was awarded the DIKTI Research Grant for the development of REaDCharge, an innovative tool designed to address sustainable energy challenges. This project focused on creating an efficient energy harvesting and storage system, aiming to provide power solutions for remote areas. The grant supported the research and development of REaDCharge, allowing me to enhance its capabilities in energy efficiency and environmental sustainability.',
+      title: 'Founder',
+      org: 'SEHATIN',
+      period: 'Oct 2020 — Present',
+      place: '',
+      body: [
+        'SEHATIN — Science and Engineering for Health Innovation Network — is a science, engineering, and technology platform focused on healthcare innovation, biomedical systems, medical engineering, and artificial intelligence.',
+        'Originally developed as a knowledge-sharing platform, SEHATIN is evolving toward an innovation ecosystem connecting research, engineering, and entrepreneurship. Its mission is to help translate scientific knowledge and engineering ideas into healthcare technologies with practical real-world applications.',
+        'NOVA emerged as its first flagship venture, extending this mission from knowledge dissemination toward technology and venture development.',
+      ],
+      tags: ['Healthcare Innovation', 'Science Communication', 'Biomedical Engineering', 'Innovation Ecosystem'],
+      img: '/img/sehatin-logo.png',
+      imgAlt: 'SEHATIN logo',
+      contain: true,
     },
   ];
+
   return (
-    <section id="research" className="py-20 bg-white">
-      <div className="max-w-[1180px] mx-auto px-6">
-        <SectionHead eyebrow="Research and Innovations" title="Collaborations, committees, and grants." />
-        <div className="grid md:grid-cols-3 gap-6">
-          {items.map((it, i) => (
-            <Reveal key={it.title} delay={i * 100}>
-              <article className="lift h-full bg-white border border-hairline rounded-2xl overflow-hidden flex flex-col">
-                <div className="relative aspect-[16/10] bg-surface-2">
-                  <Image src={it.img} alt={it.org} fill sizes="(max-width:768px) 100vw, 360px" className="object-cover" />
+    <section id="experience" className="py-24 bg-panel border-b border-line">
+      <div className="max-w-[1200px] mx-auto px-6">
+        <SectionHeader
+          num="03"
+          eyebrow="Experience"
+          title="Beyond the Lab"
+          sub="Engineering, innovation, entrepreneurship, and collaboration."
+        />
+
+        <div className="space-y-5">
+          {roles.map((r, i) => (
+            <Reveal key={r.title} delay={i * 90}>
+              <article className="card card-lift rounded-2xl p-7 md:p-9 grid lg:grid-cols-[auto_1fr_auto] gap-7 lg:gap-10">
+                <div className={`relative w-full lg:w-[132px] h-[132px] rounded-xl overflow-hidden border border-line flex-shrink-0 ${r.contain ? 'bg-white/[0.06]' : 'bg-panel-2'}`}>
+                  <Image src={r.img} alt={r.imgAlt} fill sizes="132px"
+                    className={r.contain ? 'object-contain p-5' : 'object-cover'} />
                 </div>
-                <div className="p-6 flex flex-col flex-1">
-                  <div className="text-[11px] font-bold tracking-widest uppercase text-accent-deep mb-2">{it.year}</div>
-                  <h3 className="text-base font-semibold text-ink leading-snug mb-1.5">{it.title}</h3>
-                  <div className="text-xs text-stone mb-4">{it.org}</div>
-                  <p className="text-[13px] text-slate-body leading-relaxed">{it.body}</p>
+
+                <div className="min-w-0">
+                  <h3 className="font-display text-xl font-bold text-bright tracking-[-0.01em]">{r.title}</h3>
+                  <p className="text-[0.9rem] text-accent mt-1 mb-4">{r.org}</p>
+                  <div className="space-y-3 mb-5">
+                    {r.body.map(b => (
+                      <p key={b.slice(0, 24)} className="text-[0.9rem] leading-[1.7] text-body">{b}</p>
+                    ))}
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {r.tags.map(t => <Tag key={t}>{t}</Tag>)}
+                  </div>
+                </div>
+
+                <div className="lg:text-right lg:min-w-[140px]">
+                  <div className="font-mono text-[11px] text-bright/70 whitespace-nowrap">{r.period}</div>
+                  {r.place && <div className="font-mono text-[11px] text-faint mt-1 whitespace-nowrap">{r.place}</div>}
                 </div>
               </article>
             </Reveal>
@@ -328,281 +369,392 @@ function Research() {
   );
 }
 
-// ─── AWARDS ───────────────────────────────────────────────────────────────────
+// ─── 04 TERRAGROW — FEATURED CASE STUDY ───────────────────────────────────────
 
-function Awards() {
-  const items = [
-    {
-      title: 'Gold Medal and Special Award for Incubation Opportunity on The World Invention Technology Expo (WINTEX) 2023.',
-      org: 'Korea Invention Promotion Association (KIPA)', img: '/img/award-wintex.jpg',
-      body: 'I received The Best International Invention Award from the Korea Invention Promotion Association (KIPA), South Korea’s largest and most prestigious research and innovation body, for my innovation “TerraGrow.” This IoT-based ergonomics platform for real-time plant monitoring and automated watering was recognized for its excellence in addressing sustainability and technological advancement on a global scale.',
-    },
-    {
-      title: 'Gold Medal on The World Young Inventors Exhibitions Malaysia, Kuala Lumpur',
-      org: 'MINDS (Malaysian Invention and Design Society)', img: '/img/award-wyie-gold.jpg',
-      body: 'I won a Gold Medal at the 35th ITEX (International Invention, Innovation, and Technology Exhibition) in Kuala Lumpur, Malaysia, under the WYIE (World Young Inventors Exhibition) category. Competing against 424 inventions from over 20 countries, including entries from companies, inventors, and universities, I presented “TerraGrow,” an IoT-based ergonomics platform designed for real-time plant monitoring and automated watering.',
-    },
-    {
-      title: 'The Best International Inventions',
-      org: 'Korea Invention Promotion Association (KIPA)', img: '/img/award-kipa-ceremony.jpg',
-      body: 'I received The Best International Invention Award from the Korea Invention Promotion Association (KIPA), South Korea’s largest and most prestigious research and innovation body, for my innovation “TerraGrow.” This IoT-based ergonomics platform for real-time plant monitoring and automated watering was recognized for its excellence in addressing sustainability and technological advancement on a global scale.',
-    },
-    {
-      title: '3rd Best Champion The Most Outstanding Student LLDIKTI 3 Area 2024',
-      org: 'Indonesian Region III Higher Education Service Institution', img: '/img/award-pilmapres.jpg',
-      body: 'This selection of outstanding students is a prestigious event in the world of Indonesian education and students. The selection of outstanding students measures how competent students are at the Written Ideas level which refers to SDG, English and student portfolio. I brought the case of SDG 3, namely health with the implementation of technology(SDG 9).',
-    },
+function TerraGrow() {
+  const journey = [
+    ['Problem', 'Water efficiency and accessible precision agriculture'],
+    ['Engineering', 'Multi-sensor IoT hardware + ESP32'],
+    ['Intelligence', 'Sugeno fuzzy inference for irrigation decisions'],
+    ['Prototype', 'Integrated modular physical device'],
+    ['Validation', 'Bench and greenhouse testing'],
+    ['Research', 'Peer-reviewed publication'],
+    ['Recognition', 'International invention awards'],
   ];
-  return (
-    <section id="awards" className="py-20 bg-ink relative overflow-hidden">
-      <div className="absolute inset-0 pointer-events-none opacity-[0.05]" aria-hidden>
-        <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle, #16bccc 1px, transparent 1px)', backgroundSize: '34px 34px' }} />
-      </div>
-      <div className="relative max-w-[1180px] mx-auto px-6">
-        <SectionHead on="dark" eyebrow="Awards" title="Recognized across four countries." />
-        <div className="grid md:grid-cols-2 gap-6">
-          {items.map((a, i) => (
-            <Reveal key={a.title} delay={i * 90}>
-              <article className="h-full bg-white/[0.04] border border-white/10 rounded-2xl overflow-hidden flex flex-col backdrop-blur-sm">
-                <div className="relative aspect-[16/9] bg-white/5">
-                  <Image src={a.img} alt={a.org} fill sizes="(max-width:768px) 100vw, 560px" className="object-cover" />
-                </div>
-                <div className="p-7 flex flex-col flex-1">
-                  <h3 className="text-base font-semibold text-on-dark leading-snug mb-2">{a.title}</h3>
-                  <div className="text-xs text-cyan mb-4">{a.org}</div>
-                  <p className="text-[13px] text-on-dark-muted leading-relaxed">{a.body}</p>
-                </div>
-              </article>
-            </Reveal>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
 
-// ─── PROJECTS ─────────────────────────────────────────────────────────────────
+  const highlights = [
+    ['Multi-Sensor Sensing', 'Real-time soil moisture, pH, temperature, and humidity monitoring.'],
+    ['Local Intelligence', 'Sugeno fuzzy control enables irrigation decisions to be executed locally on the ESP32.'],
+    ['Connected Monitoring', 'IoT connectivity enables remote supervision and monitoring while maintaining local autonomous control.'],
+    ['Reproducible Hardware', 'Modular hardware, printable enclosure, documented implementation, and open design resources support reproducibility and further development.'],
+  ];
 
-type Project = {
-  name: string; tag: string; blurb: string;
-  images: { src: string; alt: string }[];
-  features?: { n: string; title: string; body: string }[];
-  specs?: string[];
-  meta?: string[];
-  note?: string;
-  link?: { label: string; href: string };
-};
-
-function Projects() {
-  const projects: Project[] = [
-    {
-      name: 'TerraGrow', tag: 'IoT · Smart agriculture',
-      blurb: 'TerraGrow is a cutting-edge and sustainable platform that combines state-of-the-art technology and advanced agricultural practices to revolutionize plant monitoring and irrigation. Harnessing the power of the Internet of Things (IoT), TerraGrow enables real-time monitoring of plant health and environmental conditions, providing actionable insights for optimal crop management. The platform’s ergonomic design ensures user comfort during operation, while the intuitive interface makes it easy to use for users of all expertise levels. Moreover, TerraGrow is an affordable solution, making sustainable farming accessible to a wider audience.',
-      images: [
-        { src: '/img/terragrow-device.png', alt: 'TerraGrow sensor device' },
-        { src: '/img/terragrow-app.png', alt: 'TerraGrow mobile application' },
-        { src: '/img/terragrow-diagram.jpg', alt: 'TerraGrow soil and plant monitoring diagram' },
-      ],
-      features: [
-        { n: '01', title: 'Provide Realtime Remote Monitoring', body: 'TerraGrow can provide monitor plant conditions, temperature, humidity, pH, and plant nutrition through mobile or web applications.' },
-        { n: '02', title: 'Adjustable and Easy to use', body: 'TerraGrow boasts a remarkable feature of being highly adjustable, allowing users to customize it to their specific needs. Its user-friendly interface ensures effortless operation, making it accessible to users of all levels of expertise.' },
-        { n: '03', title: 'High Tech Sensors', body: 'This pH, Humidity and Soil Moisture sensor works by measuring the acidity or alkalinity of a nutrient or soil solution that contains the nutrients needed by plants.' },
-        { n: '04', title: 'Versatile Connectivity', body: 'TerraGrow offers versatile connectivity options, enabling seamless integration such as Wi-Fi, LoRa, and other IoT protocols. This flexibility based on their preferences and specific environmental conditions, ensuring a robust and adaptable system for plant monitoring and irrigation.' },
-      ],
-      meta: ['Intellectual Rights No : EC00202371089', 'EC002023127215'],
-      link: { label: 'bit.ly/TerraGrow', href: 'https://bit.ly/TerraGrow' },
-    },
-    {
-      name: 'SEHATIN', tag: 'IoT · Health monitoring',
-      blurb: 'SEHATIN (Smart Electronic Devices for Health Monitoring and Anticipations with IoT Technology) is an innovative health monitoring system that leverages IoT technology to provide real-time tracking and management of health parameters. It integrates advanced sensors and smart devices to monitor vital signs, detect anomalies, and send alerts for immediate medical attention. SEHATIN is designed to promote preventive healthcare, enabling early anticipation of health issues and improving accessibility to health monitoring, especially for remote or underserved areas. This platform reflects a commitment to advancing healthcare through technological innovation.',
-      images: [
-        { src: '/img/sehatin-wearable.png', alt: 'SEHATIN wearable device worn on a wrist' },
-        { src: '/img/sehatin-app.png', alt: 'SEHATIN application screen' },
-        { src: '/img/sehatin-exploded.png', alt: 'SEHATIN device exploded view' },
-      ],
-      specs: ['SPO2 Monitoring', 'Blood Pressure Monitoring', 'Heart Rate Monitoring', 'Body Temperature Monitoring', 'Cloud Data Interface'],
-      note: 'This project was created in order to submit ideas in competitions and grants',
-    },
-    {
-      name: 'MUADIPS', tag: 'Renewable energy',
-      blurb: 'Multi Angle Direction and Automated Tracking Solar Panel System (MUADIPS) is an innovative solar energy solution designed to maximize energy efficiency by utilizing automated tracking technology. MUADIPS adjusts solar panels to follow the sun’s movement throughout the day, ensuring optimal energy absorption from multiple angles. This system enhances power generation efficiency compared to fixed solar panels and promotes the use of renewable energy for sustainable development.',
-      images: [
-        { src: '/img/muadips-diagram.png', alt: 'MUADIPS sun-tracking system diagram' },
-        { src: '/img/muadips-device.png', alt: 'MUADIPS controller device' },
-        { src: '/img/muadips-app.png', alt: 'MUADIPS application screens' },
-      ],
-      specs: [
-        'Cutting edge desgin memberikan kesan mewah dan flagship.',
-        'Menggunakan bahan yang ramah lingkungan dan murah.',
-        'Easy to use and acessible untuk orang awam dalam implementasinya.',
-        'Muadips menggunakan metode motorik sederhana dan mudah digunakan',
-      ],
-      note: 'This project was created for a collaborative project to create solar panel automation and controllers in 2024.',
-    },
-    {
-      name: 'MBERR', tag: 'Research centre',
-      blurb: 'Mercu Buana Energy Harvesting Center (MBERR) is a research hub at Universitas Mercu Buana focused on developing sustainable energy solutions. It specializes in harnessing renewable energy sources like solar, wind, and thermal energy, transforming them into efficient power systems. MBERR supports innovation in energy storage and smart grids, contributing to global sustainability goals such as SDG 7 (Affordable and Clean Energy) and SDG 9 (Industry, Innovation, and Infrastructure).',
-      images: [
-        { src: '/img/mberr-diagram.jpg', alt: 'MBERR applications diagram' },
-        { src: '/img/mberr-logo.png', alt: 'MBERR energy systems overview' },
-      ],
-      note: 'This project was created to participate in a grant competition for energy-efficient buildings.',
-    },
-    {
-      name: 'ReadCharge', tag: 'Solar literacy',
-      blurb: 'ReadCharge is a combination tool of the concept of charging spot and reading spot, which aims to increase reading productivity by utilizing solar panels in energy sources with additional insights into the uniqueness of Science and Engineering Implementation.',
-      images: [
-        { src: '/img/readcharge-render.png', alt: 'ReadCharge solar reading station' },
-        { src: '/img/readcharge-logo.png', alt: 'ReadCharge logo' },
-      ],
-      note: 'Created in the context of a research grant from DIKTI for the development of ReadCharge, an innovative energy-based solution aimed at advancing technology and addressing real-world energy challenges.',
-    },
+  const figures = [
+    { src: '/img/terragrow-device.png', alt: 'TerraGrow hardware prototype', cap: 'Hardware Prototype', contain: true, span: true },
+    { src: '/img/terragrow-app.png', alt: 'TerraGrow IoT monitoring interface', cap: 'IoT Monitoring Interface', contain: true },
+    { src: '/img/terragrow-diagram.jpg', alt: 'TerraGrow system architecture and plant monitoring diagram', cap: 'System Architecture' },
   ];
 
   return (
-    <section id="projects" className="py-20 bg-surface">
-      <div className="max-w-[1180px] mx-auto px-6">
-        <SectionHead eyebrow="Projects and Creations" title="Five things built, not just proposed." />
-        <div className="space-y-6">
-          {projects.map((p, i) => <ProjectCard key={p.name} project={p} delay={i * 60} />)}
-        </div>
-      </div>
-    </section>
-  );
-}
+    <section id="terragrow" className="relative py-24 border-b border-line overflow-hidden">
+      <div className="absolute inset-0 grid-bg opacity-40" aria-hidden />
+      <div className="absolute top-0 left-1/4 w-[560px] h-[560px] rounded-full bg-accent/[0.07] blur-[150px] pointer-events-none" aria-hidden />
 
-function ProjectCard({ project: p, delay }: { project: Project; delay: number }) {
-  const [open, setOpen] = useState(false);
-  return (
-    <Reveal delay={delay}>
-      <article className="bg-white border border-hairline rounded-2xl overflow-hidden">
-        <div className="grid lg:grid-cols-[1fr_1.1fr] gap-0">
-          {/* gallery */}
-          <div className="grid grid-cols-2 gap-px bg-hairline">
-            {p.images.map((im, idx) => (
-              <div key={im.src}
-                className={`relative bg-surface-2 ${idx === 0 ? 'col-span-2 aspect-[16/10]' : 'aspect-square'}`}>
-                <Image src={im.src} alt={im.alt} fill sizes="(max-width:1024px) 100vw, 520px"
-                  className={idx === 0 ? 'object-cover' : 'object-contain p-4'} />
+      <div className="relative max-w-[1200px] mx-auto px-6">
+        {/* Title block */}
+        <Reveal className="max-w-4xl mb-14">
+          <div className="flex items-center gap-3 mb-5">
+            <span className="font-mono text-[11px] text-faint tabular-nums">04</span>
+            <span className="h-px w-6 bg-line-strong" />
+            <Eyebrow>Featured Engineering Case Study</Eyebrow>
+          </div>
+          <h2 className="font-display text-[2.6rem] md:text-[4rem] font-bold leading-[0.98] tracking-[-0.035em] text-bright mb-6">
+            TerraGrow
+          </h2>
+          <p className="text-[1.15rem] md:text-[1.4rem] leading-[1.4] text-bright/90 max-w-3xl mb-6">
+            From an engineering prototype to an award-winning and peer-reviewed open-source precision agriculture platform.
+          </p>
+          <p className="font-mono text-[11px] md:text-xs tracking-wide text-dim">
+            IoT · Embedded Systems · Fuzzy Control · Precision Agriculture · Open-Source Hardware
+          </p>
+        </Reveal>
+
+        {/* Overview + figures */}
+        <div className="grid lg:grid-cols-[0.95fr_1.05fr] gap-12 lg:gap-16 items-start mb-16">
+          <Reveal>
+            <div className="space-y-4 text-[0.97rem] leading-[1.75] text-body">
+              <p>
+                TerraGrow is an open-source precision agriculture platform developed to make intelligent irrigation and environmental monitoring more accessible, reproducible, and practical.
+              </p>
+              <p>
+                Built around an ESP32, the system integrates real-time soil moisture, pH, air temperature, and humidity sensing with a Sugeno fuzzy controller to enable autonomous irrigation decisions directly on the device.
+              </p>
+              <p>
+                Instead of relying entirely on cloud-based decision making, TerraGrow brings sensing, control, connectivity, and irrigation automation into a compact and modular hardware platform designed for practical deployment.
+              </p>
+            </div>
+          </Reveal>
+
+          <Reveal delay={100}>
+            <div className="grid grid-cols-2 gap-4">
+              {figures.map(f => (
+                <figure key={f.src} className={f.span ? 'col-span-2' : ''}>
+                  <div className={`relative rounded-xl overflow-hidden border border-line bg-panel-2 ${f.span ? 'aspect-[16/10]' : 'aspect-square'}`}>
+                    <Image src={f.src} alt={f.alt} fill
+                      sizes="(max-width: 1024px) 50vw, 300px"
+                      className={f.contain ? 'object-contain p-5' : 'object-cover'} />
+                  </div>
+                  <figcaption className="mt-2.5 font-mono text-[10px] uppercase tracking-[0.12em] text-faint">{f.cap}</figcaption>
+                </figure>
+              ))}
+            </div>
+          </Reveal>
+        </div>
+
+        {/* Research-to-product journey */}
+        <Reveal className="mb-16">
+          <div className="card rounded-2xl p-7 md:p-9">
+            <div className="flex items-center gap-3 mb-8">
+              <Eyebrow>Research to product</Eyebrow>
+            </div>
+            <ol className="grid sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-7">
+              {journey.map(([stage, desc], i) => (
+                <li key={stage} className="relative">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="font-mono text-[10px] text-accent tabular-nums">{String(i + 1).padStart(2, '0')}</span>
+                    <span className="h-px flex-1 bg-line" />
+                  </div>
+                  <div className="font-display text-sm font-bold text-bright mb-1.5">{stage}</div>
+                  <p className="text-[12.5px] leading-relaxed text-dim">{desc}</p>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </Reveal>
+
+        {/* System highlights */}
+        <Reveal className="mb-16">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {highlights.map(([t, d]) => (
+              <div key={t} className="card rounded-xl p-6">
+                <h3 className="font-display text-sm font-bold text-bright mb-2.5">{t}</h3>
+                <p className="text-[12.5px] leading-relaxed text-body">{d}</p>
               </div>
             ))}
           </div>
+        </Reveal>
 
-          {/* content */}
-          <div className="p-7 md:p-9">
-            <div className="flex items-center gap-3 mb-3">
-              <h3 className="text-2xl font-medium text-ink tracking-[-0.5px]">{p.name}</h3>
-              <span className="text-[10px] font-bold uppercase tracking-widest text-accent-deep bg-accent-soft rounded-full px-2.5 py-1">
-                {p.tag}
-              </span>
+        {/* Publication highlight */}
+        <Reveal className="mb-16">
+          <div className="relative rounded-2xl border border-accent/30 bg-accent/[0.06] p-7 md:p-9 overflow-hidden">
+            <div className="grid md:grid-cols-[1fr_auto] gap-8 items-start">
+              <div className="min-w-0">
+                <Eyebrow>Published Research</Eyebrow>
+                <h3 className="font-display text-lg md:text-[1.4rem] font-bold leading-snug text-bright mt-4 mb-4">
+                  TerraGrow: Integrated platform for real time plant monitoring and automated watering system with IoT and fuzzy Sugeno Algorithm
+                </h3>
+                <p className="text-[0.9rem] text-body mb-1.5">
+                  Prima Wijayakusuma · Galang Persada Nurani Hakim · Bin Li
+                </p>
+                <p className="font-mono text-[11.5px] text-dim mb-5">
+                  HardwareX · Elsevier · Volume 24 · e00724 · 2025
+                </p>
+                <div className="flex flex-wrap gap-2 mb-6">
+                  {['First Author', 'Elsevier', 'HardwareX', 'Open Access', 'Open-Source Hardware'].map(b => (
+                    <span key={b} className="text-[10px] font-semibold uppercase tracking-[0.1em] text-accent border border-accent/30 bg-accent/10 rounded px-2 py-1">
+                      {b}
+                    </span>
+                  ))}
+                </div>
+                <div className="flex flex-wrap items-center gap-5">
+                  <a href="https://www.sciencedirect.com/science/article/pii/S2468067225001026"
+                    target="_blank" rel="noopener noreferrer"
+                    className="group inline-flex items-center gap-2 bg-bright text-void font-semibold text-sm px-5 py-3 rounded-full hover:bg-white/90 transition-colors">
+                    Read the Paper
+                    <span className="group-hover:translate-x-0.5 transition-transform"><ArrowUpRight /></span>
+                  </a>
+                  <span className="font-mono text-[11px] text-faint">DOI: 10.1016/j.ohx.2025.e00724</span>
+                </div>
+              </div>
+
+              <figure className="w-full md:w-[190px]">
+                <div className="relative aspect-[3/4] rounded-lg overflow-hidden border border-line bg-white">
+                  <Image src="/img/paper-hardwarex.jpg" alt="First page of the TerraGrow paper in HardwareX"
+                    fill sizes="190px" className="object-cover object-top" />
+                </div>
+              </figure>
             </div>
-            <p className={`text-[13.5px] text-slate-body leading-relaxed ${open ? '' : 'line-clamp-4'}`}>{p.blurb}</p>
-            <button onClick={() => setOpen(!open)}
-              className="text-xs font-semibold text-accent hover:text-accent-deep mt-2 transition-colors">
-              {open ? 'Show less' : 'Read more'}
-            </button>
+          </div>
+        </Reveal>
 
-            {p.specs && (
-              <ul className="grid sm:grid-cols-2 gap-x-5 gap-y-2 mt-6">
-                {p.specs.map(s => (
-                  <li key={s} className="flex items-start gap-2 text-[13px] text-slate-body leading-snug">
-                    <span className="w-1.5 h-1.5 rounded-full bg-cyan mt-1.5 flex-shrink-0" />
-                    {s}
+        {/* Recognition tied to the project */}
+        <Reveal>
+          <div className="grid lg:grid-cols-[1fr_auto] gap-8 items-center card rounded-2xl p-7 md:p-9">
+            <div>
+              <Eyebrow>International Recognition</Eyebrow>
+              <ul className="mt-5 space-y-2.5">
+                {[
+                  'Gold Medal — The World Young Inventors Exhibition, Kuala Lumpur, Malaysia',
+                  'Gold Medal — The World Invention Technology Expo (WINTEX) 2023',
+                  'Special Award / The Best International Inventions — Korea Invention Promotion Association (KIPA)',
+                ].map(a => (
+                  <li key={a} className="flex items-start gap-3 text-[0.9rem] text-body leading-relaxed">
+                    <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-cyan flex-shrink-0" />
+                    {a}
                   </li>
                 ))}
               </ul>
-            )}
-
-            {p.features && (
-              <div className="grid sm:grid-cols-2 gap-4 mt-6">
-                {p.features.map(f => (
-                  <div key={f.n} className="rounded-xl bg-surface border border-hairline p-4">
-                    <div className="text-[10px] font-bold tracking-widest text-accent mb-1.5">{f.n}</div>
-                    <div className="text-[13px] font-semibold text-ink mb-1 leading-snug">{f.title}</div>
-                    <p className="text-[11.5px] text-slate-body leading-relaxed">{f.body}</p>
-                  </div>
-                ))}
+              <p className="font-mono text-[11px] text-faint mt-6">
+                Prototype → Validation → International Recognition → Peer-Reviewed Publication
+              </p>
+            </div>
+            <figure className="w-full lg:w-[260px]">
+              <div className="relative aspect-[4/3] rounded-xl overflow-hidden border border-line bg-panel-2">
+                <Image src="/img/terragrow-booth.jpg" alt="TerraGrow presented at the ITEX international exhibition"
+                  fill sizes="260px" className="object-cover" />
               </div>
-            )}
-
-            {p.meta && (
-              <div className="flex flex-wrap gap-2 mt-6">
-                {p.meta.map(m => (
-                  <span key={m} className="text-[11px] font-medium text-slate-body bg-surface-2 rounded-full px-3 py-1.5">{m}</span>
-                ))}
-              </div>
-            )}
-
-            {p.note && <p className="text-[11.5px] text-stone italic mt-5 leading-relaxed">{p.note}</p>}
-
-            {p.link && (
-              <a href={p.link.href} target="_blank" rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-sm font-semibold text-accent hover:text-accent-deep mt-5 transition-colors">
-                {p.link.label} <ArrowUpRight />
-              </a>
-            )}
+              <figcaption className="mt-2.5 font-mono text-[10px] uppercase tracking-[0.12em] text-faint">Exhibited at ITEX</figcaption>
+            </figure>
           </div>
-        </div>
-      </article>
-    </Reveal>
+        </Reveal>
+      </div>
+    </section>
   );
 }
 
-// ─── PUBLICATIONS ─────────────────────────────────────────────────────────────
+// ─── 05 VENTURES ──────────────────────────────────────────────────────────────
 
-function Publications() {
-  const pubs = [
+function Ventures() {
+  return (
+    <section id="ventures" className="py-24 bg-panel border-b border-line">
+      <div className="max-w-[1200px] mx-auto px-6">
+        <SectionHeader
+          num="05"
+          eyebrow="Ventures &amp; Innovation"
+          title="Technologies being built, not only studied."
+          sub="Two ventures translating sensing, AI, and healthcare needs into technology platforms."
+        />
+
+        <div className="space-y-6">
+          {/* NOVA */}
+          <Reveal>
+            <article className="card rounded-2xl overflow-hidden grid lg:grid-cols-[1.1fr_0.9fr]">
+              <div className="p-7 md:p-10">
+                <div className="flex flex-wrap items-center gap-3 mb-5">
+                  <span className="font-display text-2xl font-bold text-bright tracking-[-0.02em]">NOVA</span>
+                  <span className="text-[11px] font-medium text-dim border-l border-line pl-3">CEO</span>
+                </div>
+                <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-accent mb-5">Human Risk Intelligence</p>
+
+                <div className="space-y-3.5 text-[0.92rem] leading-[1.7] text-body mb-6">
+                  <p>
+                    NOVA is developing Human Risk Intelligence technologies that transform fragmented physiological, behavioral, and environmental data into actionable insights for individuals, caregivers, healthcare teams, and organizations.
+                  </p>
+                  <p>
+                    Its technology direction combines intelligent sensing, AI-driven risk assessment, connected devices, historical event analysis, and human-centered alerting to support earlier awareness and response to human health and safety risks.
+                  </p>
+                  <p>
+                    NOVA represents my work in translating research, sensing technologies, AI, and healthcare needs into a scalable technology platform.
+                  </p>
+                </div>
+
+                <div className="rounded-xl border border-cyan/25 bg-cyan/[0.06] px-4 py-3 mb-6">
+                  <div className="font-mono text-[10px] uppercase tracking-[0.12em] text-cyan mb-1">Recognition</div>
+                  <div className="text-[0.87rem] text-bright/90">Most Potential Award — Startup Alliance China 2026</div>
+                </div>
+
+                <div className="flex flex-wrap gap-2 mb-7">
+                  {['Human Risk Intelligence', 'AI', 'Digital Health', 'Connected Devices', 'Human-Centered Technology'].map(t => (
+                    <Tag key={t}>{t}</Tag>
+                  ))}
+                </div>
+
+                <a href="https://nova-body-vital-assistant.vercel.app" target="_blank" rel="noopener noreferrer"
+                  className="group inline-flex items-center gap-2 text-sm font-semibold text-bright hover:text-accent transition-colors">
+                  Visit NOVA
+                  <span className="group-hover:translate-x-0.5 transition-transform"><ArrowUpRight /></span>
+                </a>
+              </div>
+
+              <div className="relative min-h-[240px] lg:min-h-full border-t lg:border-t-0 lg:border-l border-line bg-panel-2">
+                <Image src="/img/venture-nova-pitch.jpg" alt="Prima presenting NOVA"
+                  fill sizes="(max-width: 1024px) 100vw, 480px" className="object-cover" />
+              </div>
+            </article>
+          </Reveal>
+
+          {/* Medivue */}
+          <Reveal delay={90}>
+            <article className="card rounded-2xl p-7 md:p-10">
+              <div className="grid lg:grid-cols-[1.1fr_0.9fr] gap-10">
+                <div>
+                  <div className="flex flex-wrap items-center gap-3 mb-5">
+                    <span className="font-display text-2xl font-bold text-bright tracking-[-0.02em]">Medivue</span>
+                    <span className="text-[11px] font-medium text-dim border-l border-line pl-3">CIO</span>
+                  </div>
+                  <p className="text-[1.02rem] leading-snug text-bright/90 mb-5">
+                    Built for the moments between first contact and definitive care.
+                  </p>
+                  <div className="space-y-3.5 text-[0.92rem] leading-[1.7] text-body">
+                    <p>
+                      Medivue is developing a connected rapid assessment system designed to preserve critical physiological context as a patient moves from the scene of an emergency toward definitive hospital care.
+                    </p>
+                    <p>
+                      The concept explores how rapid physiological assessment, connected sensing, intelligent interpretation, and information continuity can help bridge the gap between first responders, ambulances, and receiving hospitals.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex flex-col justify-between gap-6">
+                  <div className="rounded-xl border border-line bg-white/[0.03] p-5">
+                    <div className="font-mono text-[10px] uppercase tracking-[0.12em] text-dim mb-2">Stage</div>
+                    <p className="text-[0.87rem] text-bright/90 mb-3">Medivue is currently at an early / pre-seed stage.</p>
+                    <div className="rule my-4" />
+                    <div className="font-display text-sm font-bold text-bright mb-1.5">Early stage. Shared ambition.</div>
+                    <p className="text-[12.5px] leading-relaxed text-body">
+                      Medivue is open to conversations with investors and collaborators who share the ambition of improving continuity between first assessment and the care that follows.
+                    </p>
+                  </div>
+
+                  <div>
+                    <div className="flex flex-wrap gap-2 mb-6">
+                      {['MedTech', 'Emergency Care', 'Connected Health', 'Physiological Sensing', 'Product Innovation'].map(t => (
+                        <Tag key={t}>{t}</Tag>
+                      ))}
+                    </div>
+                    <a href="https://medivue-corp.vercel.app" target="_blank" rel="noopener noreferrer"
+                      className="group inline-flex items-center gap-2 text-sm font-semibold text-bright hover:text-accent transition-colors">
+                      Visit Medivue
+                      <span className="group-hover:translate-x-0.5 transition-transform"><ArrowUpRight /></span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </Reveal>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ─── 06 SELECTED ENGINEERING WORK ─────────────────────────────────────────────
+
+function SelectedWork() {
+  const projects = [
     {
-      title: 'A Robot Arm Movement System Using A System Of Four Degrees Of Freedom To Transport Goods"',
-      venue: 'International Journal for Research Trends and Innovation . ISSN Approved Journal No: 2456-3315 | Impact factor: 8.14 | ESTD Year: 2016 Volume 8 Issue 7, July-2023 - IJRTI',
-      body: 'I published a paper that presents an innovative robotic arm system utilizing a four degrees of freedom (DOF) mechanism to efficiently transport goods, contributing to advancements in automation and logistics. This publication demonstrates my ability to conduct impactful research in robotics and automation, further establishing my expertise in the field.',
-      href: 'https://www.ijrti.org/papers/IJRTI2307114.pdf',
+      name: 'SEHATIN',
+      kind: 'IoT · Health monitoring',
+      body: 'A health monitoring system using IoT to track health parameters in real time, integrating sensors and connected devices to monitor vital signs, detect anomalies, and raise alerts. Designed to support preventive care and improve access to monitoring in remote or underserved areas.',
+      specs: ['SpO₂ monitoring', 'Blood pressure monitoring', 'Heart rate monitoring', 'Body temperature monitoring', 'Cloud data interface'],
+      img: '/img/sehatin-wearable.png',
+      note: 'Developed for competition and grant submissions.',
+      contain: true,
     },
     {
-      title: 'Kalman Filter for Tracking a Noisy Cosinousoidal Signal',
-      venue: 'Conference Paper of “the 9th International Conference on Computer and Communication Engineering 2023 — PUBLISHED ON IEEE XPLORE SCOPUS INDEXED“',
-      body: 'I published a paper, which focuses on developing a Kalman filter algorithm for tracking noisy cosine signals, was published on IEEE Xplore and is Scopus-indexed, contributing to advancements in signal processing for noise reduction and improved tracking accuracy. This publication reflects my expertise in signal processing and my ability to produce research with significant academic impact.',
-      href: 'https://ieeexplore.ieee.org/abstract/document/10246039',
+      name: 'MUADIPS',
+      kind: 'Renewable energy',
+      body: 'Multi Angle Direction and Automated Tracking Solar Panel System — a solar energy system that adjusts panel orientation to follow the sun through the day, improving energy capture compared with fixed installations.',
+      specs: ['Simple motorised tracking mechanism', 'Low-cost, environmentally friendly materials', 'Straightforward to deploy and operate'],
+      img: '/img/muadips-diagram.png',
+      note: 'Built for a collaborative solar automation and controller project in 2024.',
+      contain: true,
     },
     {
-      title: 'DEVELOPMENT OF CASSAVA CHIP PRODUCTION IN THE KERANGGAN ECO-TOURISM VILLAGE BY IMPLEMENTING CREATIVE AND INNOVATIVE TECHNOLOGY',
-      venue: 'International Conference on Community Development (ICCD) 2024',
-      body: 'The project involves the development of cassava chip production in the Keranggan Eco-Tourism Village, integrating creative and innovative technology to improve the local economy and promote sustainable practices.',
-      href: 'https://doi.org/10.33068/iccd.v6i1.805',
+      name: 'ReadCharge',
+      kind: 'Solar literacy',
+      body: 'A combined charging and reading station that uses solar panels as its energy source, built to encourage reading while making the underlying science and engineering visible to its users.',
+      specs: ['Solar-powered station', 'Public literacy deployment', 'Community evaluation'],
+      img: '/img/readcharge-render.png',
+      note: 'Developed under a DIKTI research grant.',
+      contain: true,
     },
     {
-      title: 'Improving the Green Economy Utilizing ReadCharge Solar Literacy Technology at SMP Arrihlah',
-      venue: 'Jurnal Abdi Masyarakat (JAM)',
-      body: 'This research empowered the Arrihlah School community through ReadCharge, a solar-powered literacy station, to promote reading interest and renewable energy awareness. The program included design, training, and evaluation, resulting in a 100% increase in literacy engagement and environmental awareness.',
-      href: 'https://www.researchgate.net/profile/Sawarni-Hasibuan/publication/393999050_Improving_the_Green_Economy_Utilizing_ReadCharge_Solar_Literacy_Technology_at_SMP_Arrihlah/links/688369674eccfb3f29c4f32d/Improving-the-Green-Economy-Utilizing-ReadCharge-Solar-Literacy-Technology-at-SMP-Arrihlah.pdf',
-    },
-    {
-      title: 'TerraGrow: Integrated platform for real time plant monitoring and automated watering system with IoT and fuzzy Sugeno Algorithm',
-      venue: 'HardwareX Elsevier, Q2 Scopus',
-      body: 'P. W. Kusuma, G. P. N. Hakim, and B. Li, “TerraGrow: Integrated platform for real time plant monitoring and automated watering system with IoT and fuzzy Sugeno Algorithm,” Hardwarex, vol. 24, p. e00724, 2025, doi: 10.1016/j.ohx.2025.e00724.',
-      href: 'https://www.sciencedirect.com/science/article/pii/S2468067225001026?via%3Dihub',
+      name: 'MBERR',
+      kind: 'Research centre',
+      body: 'Mercu Buana Energy Harvesting Center — a research hub focused on renewable energy sources including solar, wind, and thermal energy, and on converting them into efficient power systems. Supports work on energy storage and smart grids toward SDG 7 and SDG 9.',
+      specs: ['Energy harvesting', 'Storage and smart grids', 'SDG 7 · SDG 9'],
+      img: '/img/mberr-diagram.jpg',
+      note: 'Prepared for a grant competition on energy-efficient buildings.',
     },
   ];
+
   return (
-    <section id="publications" className="py-20 bg-white">
-      <div className="max-w-[1180px] mx-auto px-6">
-        <SectionHead eyebrow="Publications" title="Peer-reviewed, and public." />
-        <div className="max-w-3xl mx-auto space-y-4">
-          {pubs.map((p, i) => (
-            <Reveal key={p.href} delay={i * 70}>
-              <a href={p.href} target="_blank" rel="noopener noreferrer"
-                className="lift block bg-white border border-hairline rounded-2xl p-6 group">
-                <div className="flex items-start justify-between gap-4 mb-2">
-                  <h3 className="text-[15px] font-semibold text-ink leading-snug group-hover:text-accent transition-colors">
-                    {p.title}
-                  </h3>
-                  <span className="text-stone group-hover:text-accent transition-colors flex-shrink-0 mt-1">
-                    <ArrowUpRight />
-                  </span>
+    <section id="work" className="py-24 border-b border-line">
+      <div className="max-w-[1200px] mx-auto px-6">
+        <SectionHeader
+          num="06"
+          eyebrow="Selected Engineering Work"
+          title="Other systems I&rsquo;ve built."
+          sub="Earlier and parallel engineering projects across sensing, energy, and connected hardware."
+        />
+
+        <div className="grid md:grid-cols-2 gap-5">
+          {projects.map((p, i) => (
+            <Reveal key={p.name} delay={i * 70}>
+              <article className="card card-lift rounded-2xl overflow-hidden h-full flex flex-col">
+                <div className="relative aspect-[16/9] bg-panel-2 border-b border-line">
+                  <Image src={p.img} alt={`${p.name} project`} fill
+                    sizes="(max-width: 768px) 100vw, 560px"
+                    className={p.contain ? 'object-contain p-7' : 'object-cover'} />
                 </div>
-                <div className="text-[11.5px] text-accent-deep mb-3 leading-relaxed">{p.venue}</div>
-                <p className="text-[13px] text-slate-body leading-relaxed">{p.body}</p>
-              </a>
+                <div className="p-7 flex flex-col flex-1">
+                  <div className="flex items-baseline justify-between gap-4 mb-3">
+                    <h3 className="font-display text-lg font-bold text-bright">{p.name}</h3>
+                    <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-faint text-right">{p.kind}</span>
+                  </div>
+                  <p className="text-[0.88rem] leading-[1.7] text-body mb-5">{p.body}</p>
+                  <ul className="space-y-1.5 mb-5">
+                    {p.specs.map(s => (
+                      <li key={s} className="flex items-start gap-2.5 text-[12.5px] text-dim">
+                        <span className="mt-1.5 h-1 w-1 rounded-full bg-accent flex-shrink-0" />
+                        {s}
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="font-mono text-[10.5px] text-faint mt-auto pt-4 border-t border-line">{p.note}</p>
+                </div>
+              </article>
             </Reveal>
           ))}
         </div>
@@ -611,45 +763,341 @@ function Publications() {
   );
 }
 
-// ─── RECOMMENDATIONS ──────────────────────────────────────────────────────────
+// ─── 07 RESEARCH & PUBLICATIONS ───────────────────────────────────────────────
+
+function Research() {
+  const featured = {
+    year: '2025',
+    title: 'TerraGrow: Integrated platform for real time plant monitoring and automated watering system with IoT and fuzzy Sugeno Algorithm',
+    venue: 'HardwareX · Elsevier · Volume 24 · e00724',
+    type: 'Journal article · Open access',
+    authors: 'Prima Wijayakusuma · Galang Persada Nurani Hakim · Bin Li',
+    href: 'https://www.sciencedirect.com/science/article/pii/S2468067225001026',
+    doi: '10.1016/j.ohx.2025.e00724',
+  };
+
+  const pubs = [
+    {
+      year: '2023',
+      title: 'Kalman Filter for Tracking a Noisy Cosinousoidal Signal',
+      venue: 'The 9th International Conference on Computer and Communication Engineering',
+      type: 'Conference paper · IEEE Xplore · Scopus-indexed',
+      href: 'https://ieeexplore.ieee.org/abstract/document/10246039',
+    },
+    {
+      year: '2023',
+      title: 'A Robot Arm Movement System Using A System Of Four Degrees Of Freedom To Transport Goods',
+      venue: 'International Journal for Research Trends and Innovation · Volume 8, Issue 7',
+      type: 'Journal article',
+      href: 'https://www.ijrti.org/papers/IJRTI2307114.pdf',
+    },
+    {
+      year: '2024',
+      title: 'Development of Cassava Chip Production in the Keranggan Eco-Tourism Village by Implementing Creative and Innovative Technology',
+      venue: 'International Conference on Community Development (ICCD)',
+      type: 'Conference paper',
+      href: 'https://doi.org/10.33068/iccd.v6i1.805',
+    },
+    {
+      year: '—',
+      title: 'Improving the Green Economy Utilizing ReadCharge Solar Literacy Technology at SMP Arrihlah',
+      venue: 'Jurnal Abdi Masyarakat (JAM)',
+      type: 'Journal article · Community engagement',
+      href: 'https://www.researchgate.net/profile/Sawarni-Hasibuan/publication/393999050_Improving_the_Green_Economy_Utilizing_ReadCharge_Solar_Literacy_Technology_at_SMP_Arrihlah/links/688369674eccfb3f29c4f32d/Improving-the-Green-Economy-Utilizing-ReadCharge-Solar-Literacy-Technology-at-SMP-Arrihlah.pdf',
+    },
+  ];
+
+  const activity = [
+    {
+      year: '2023',
+      title: 'International Research Collaboration',
+      org: 'Amur State University, Russia',
+      body: 'Invited to collaborate on aerospace research with funding support from AMSU, following work on inertial navigation systems and Kalman filter approaches.',
+    },
+    {
+      year: '2023',
+      title: 'Conference Committee',
+      org: 'IEEE Indonesia Section',
+      body: 'Committee member organising and coordinating events with the IEEE Antennas and Propagation Society and the IEEE Indonesia Section.',
+    },
+    {
+      year: '2024',
+      title: 'DIKTI Research Grant',
+      org: 'Directorate General of Higher Education, Indonesia',
+      body: 'Awarded for the development of ReadCharge, an energy harvesting and storage system aimed at power solutions for remote areas.',
+    },
+  ];
+
+  return (
+    <section id="research" className="py-24 bg-panel border-b border-line">
+      <div className="max-w-[1200px] mx-auto px-6">
+        <SectionHeader
+          num="07"
+          eyebrow="Research &amp; Publications"
+          title="Research &amp; Publications"
+          sub="Peer-reviewed work across sensing, electronics, wireless systems, intelligent systems, and engineering applications."
+        />
+
+        {/* Featured publication */}
+        <Reveal className="mb-5">
+          <a href={featured.href} target="_blank" rel="noopener noreferrer"
+            className="group block rounded-2xl border border-accent/30 bg-accent/[0.06] p-7 md:p-8 hover:border-accent/50 transition-colors">
+            <div className="flex flex-wrap items-center gap-3 mb-4">
+              <span className="font-mono text-[11px] text-accent tabular-nums">{featured.year}</span>
+              <span className="text-[10px] font-semibold uppercase tracking-[0.1em] text-accent border border-accent/30 rounded px-2 py-0.5">Featured</span>
+            </div>
+            <h3 className="font-display text-lg md:text-xl font-bold leading-snug text-bright group-hover:text-accent transition-colors mb-3">
+              {featured.title}
+            </h3>
+            <p className="text-[0.86rem] text-body mb-1">{featured.authors}</p>
+            <p className="font-mono text-[11.5px] text-dim">{featured.venue}</p>
+            <div className="flex flex-wrap items-center justify-between gap-4 mt-5 pt-5 border-t border-accent/20">
+              <span className="font-mono text-[11px] text-faint">{featured.type} · DOI {featured.doi}</span>
+              <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-bright">
+                View Publication
+                <span className="group-hover:translate-x-0.5 transition-transform"><ArrowUpRight /></span>
+              </span>
+            </div>
+          </a>
+        </Reveal>
+
+        {/* Remaining publications */}
+        <div className="space-y-3 mb-16">
+          {pubs.map((p, i) => (
+            <Reveal key={p.href} delay={i * 60}>
+              <a href={p.href} target="_blank" rel="noopener noreferrer"
+                className="group card rounded-xl p-6 grid sm:grid-cols-[54px_1fr_auto] gap-4 sm:gap-6 items-start">
+                <span className="font-mono text-[11px] text-accent tabular-nums pt-1">{p.year}</span>
+                <div className="min-w-0">
+                  <h3 className="text-[0.95rem] font-semibold leading-snug text-bright group-hover:text-accent transition-colors mb-2">
+                    {p.title}
+                  </h3>
+                  <p className="font-mono text-[11px] text-dim leading-relaxed">{p.venue}</p>
+                  <p className="font-mono text-[10.5px] text-faint mt-1">{p.type}</p>
+                </div>
+                <span className="text-dim group-hover:text-accent transition-colors pt-1 hidden sm:block">
+                  <ArrowUpRight />
+                </span>
+              </a>
+            </Reveal>
+          ))}
+        </div>
+
+        {/* Research activity */}
+        <Reveal>
+          <div className="flex items-center gap-3 mb-7">
+            <Eyebrow>Collaborations &amp; Grants</Eyebrow>
+            <span className="h-px flex-1 bg-line" />
+          </div>
+          <div className="grid md:grid-cols-3 gap-4">
+            {activity.map(a => (
+              <div key={a.title} className="card rounded-xl p-6">
+                <div className="font-mono text-[11px] text-accent tabular-nums mb-3">{a.year}</div>
+                <h3 className="font-display text-sm font-bold text-bright mb-1">{a.title}</h3>
+                <p className="text-[11.5px] text-dim mb-3">{a.org}</p>
+                <p className="text-[12.5px] leading-relaxed text-body">{a.body}</p>
+              </div>
+            ))}
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+// ─── 08 RECOGNITION ───────────────────────────────────────────────────────────
+
+function Recognition() {
+  const dimensions = [
+    ['Engineering & Invention', 'International invention awards including WYIE, WINTEX, and KIPA recognition.'],
+    ['Research', 'Peer-reviewed publications including Elsevier / HardwareX and IEEE-related venues.'],
+    ['Technology & Venture Building', 'Most Potential Award — Venture Builders, Startup Alliance China 2026.'],
+  ];
+
+  const awards = [
+    {
+      award: 'Most Potential Award', org: 'Venture Builders — Startup Alliance China', country: 'China', year: '2026',
+      project: 'NOVA', img: '/img/rec-venture-builders.jpg',
+      note: 'Received through Venture Builders at Startup Alliance China 2026 for NOVA and its technology direction.',
+    },
+    {
+      award: 'Gold Medal', org: 'The World Young Inventors Exhibition (WYIE) — MINDS', country: 'Malaysia', year: '2023',
+      project: 'TerraGrow', img: '/img/rec-itex-gold.jpg',
+      note: 'Presented at the 35th ITEX in Kuala Lumpur under the WYIE category.',
+    },
+    {
+      award: 'Gold Medal & Special Award', org: 'The World Invention Technology Expo (WINTEX) — KIPA', country: 'Korea', year: '2023',
+      project: 'TerraGrow', img: '/img/rec-kipa.jpg',
+      note: 'Special Award for Incubation Opportunity from the Korea Invention Promotion Association.',
+    },
+    {
+      award: 'The Best International Inventions', org: 'Korea Invention Promotion Association (KIPA)', country: 'Korea', year: '2023',
+      project: 'TerraGrow', img: '/img/rec-special-award.jpg',
+      note: '',
+    },
+    {
+      award: '3rd Best Champion — The Most Outstanding Student', org: 'LLDIKTI Region III', country: 'Indonesia', year: '2024',
+      project: '', img: '/img/rec-pilmapres.jpg',
+      note: 'Written ideas on SDG 3 with technology implementation (SDG 9).',
+    },
+    {
+      award: 'Incubator Opportunity Award', org: 'INOTEK Foundation', country: 'Indonesia', year: '',
+      project: 'TerraGrow', img: '/img/rec-wintex-inotek.jpg',
+      note: '',
+    },
+  ];
+
+  return (
+    <section id="recognition" className="py-24 border-b border-line">
+      <div className="max-w-[1200px] mx-auto px-6">
+        <SectionHeader
+          num="08"
+          eyebrow="Recognition"
+          title="Engineering and innovation recognized internationally."
+          sub="Progression across three dimensions of the work — invention, research, and venture building."
+        />
+
+        <Reveal className="mb-14">
+          <div className="grid md:grid-cols-3 gap-4">
+            {dimensions.map(([t, d], i) => (
+              <div key={t} className="card rounded-xl p-6">
+                <div className="font-mono text-[10px] text-accent tabular-nums mb-3">{String(i + 1).padStart(2, '0')}</div>
+                <h3 className="font-display text-sm font-bold text-bright mb-2">{t}</h3>
+                <p className="text-[12.5px] leading-relaxed text-body">{d}</p>
+              </div>
+            ))}
+          </div>
+          <p className="font-mono text-[11px] text-faint mt-6 text-center">
+            Engineering → Research → Technology Development → Venture Building
+          </p>
+        </Reveal>
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {awards.map((a, i) => (
+            <Reveal key={a.award + a.org} delay={i * 60}>
+              <article className="card card-lift rounded-2xl overflow-hidden h-full flex flex-col">
+                <div className="relative aspect-[4/3] bg-panel-2 border-b border-line">
+                  <Image src={a.img} alt={`${a.award}, ${a.org}`} fill
+                    sizes="(max-width: 1024px) 50vw, 380px" className="object-cover" />
+                </div>
+                <div className="p-6 flex flex-col flex-1">
+                  <h3 className="font-display text-[0.95rem] font-bold leading-snug text-bright mb-2">{a.award}</h3>
+                  <p className="text-[12.5px] leading-relaxed text-body mb-4">{a.org}</p>
+                  {a.note && <p className="text-[11.5px] leading-relaxed text-dim mb-4">{a.note}</p>}
+                  <dl className="mt-auto pt-4 border-t border-line flex flex-wrap gap-x-5 gap-y-1.5 font-mono text-[10.5px]">
+                    {a.country && (
+                      <div className="flex gap-1.5"><dt className="text-faint">Country</dt><dd className="text-body">{a.country}</dd></div>
+                    )}
+                    {a.year && (
+                      <div className="flex gap-1.5"><dt className="text-faint">Year</dt><dd className="text-body">{a.year}</dd></div>
+                    )}
+                    {a.project && (
+                      <div className="flex gap-1.5"><dt className="text-faint">Project</dt><dd className="text-accent">{a.project}</dd></div>
+                    )}
+                  </dl>
+                </div>
+              </article>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ─── 09 EDUCATION ─────────────────────────────────────────────────────────────
+
+function Education() {
+  const main = [
+    {
+      school: 'Beijing Institute of Technology',
+      degree: 'Master’s Degree',
+      detail: 'School of Integrated Circuits and Electronics',
+      period: '2025 — Present',
+      img: '/img/edu-bit.jpg',
+    },
+    {
+      school: 'Universitas Mercu Buana',
+      degree: 'Bachelor of Engineering — Electrical Engineering',
+      detail: 'Summa Cum Laude · Best Graduate, Class of 2025',
+      period: '2021 — 2025',
+      img: '/img/edu-medal.jpg',
+    },
+  ];
+  return (
+    <section id="education" className="py-24 bg-panel border-b border-line">
+      <div className="max-w-[1200px] mx-auto px-6">
+        <SectionHeader num="09" eyebrow="Education" title="Education" />
+
+        <div className="grid md:grid-cols-2 gap-5 mb-6">
+          {main.map((e, i) => (
+            <Reveal key={e.school} delay={i * 80}>
+              <article className="card rounded-2xl p-7 flex gap-6 h-full">
+                <div className="relative w-[92px] h-[112px] rounded-lg overflow-hidden border border-line bg-panel-2 flex-shrink-0">
+                  <Image src={e.img} alt={e.school} fill sizes="92px" className="object-cover" />
+                </div>
+                <div className="min-w-0">
+                  <div className="font-mono text-[11px] text-accent mb-2">{e.period}</div>
+                  <h3 className="font-display text-base font-bold text-bright leading-snug mb-1.5">{e.school}</h3>
+                  <p className="text-[0.87rem] text-body leading-snug mb-1">{e.degree}</p>
+                  <p className="text-[12px] text-dim leading-snug">{e.detail}</p>
+                </div>
+              </article>
+            </Reveal>
+          ))}
+        </div>
+
+        <Reveal delay={140}>
+          <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1 rounded-xl border border-line px-6 py-4">
+            <span className="font-mono text-[11px] text-faint">2023</span>
+            <span className="text-[0.87rem] text-body">
+              Exchange Programme, Spring Semester — Electronics Science and Technology, Beijing Institute of Technology
+            </span>
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+// ─── 10 RECOMMENDATIONS ───────────────────────────────────────────────────────
 
 function Recommendations() {
   const recs = [
     {
-      name: 'Novia Sya’baniyah',
-      role: 'Ex-Business market research intern at MD Co || Software Development Enthusiast',
-      when: 'August 23, 2022, Novia worked with Prima on the same team',
-      body: 'Prima has one project with me, namely Sigmades. He has good creative thinking and self-confidence. I am lucky to have the opportunity to work on a smart village development project with him. It’s my utmost to recommend Prima in his future career.',
+      name: 'Adnan Hasyim Wibowo',
+      role: 'Project Manager @ SDGs Hub UI',
+      quote: 'Prima consistently demonstrated technical expertise and the creativity to turn complex ideas into innovative solutions. His ability to bridge research, innovation, and real-world impact makes him stand out.',
     },
     {
-      name: 'Jheskia Ardito Sawung',
-      role: 'Electrical Engineering Student of Institut Teknologi Kalimantan | Laboratory Assistant',
-      when: 'June 12, 2024, Jheskia worked with Prima on the same team',
-      body: 'I had the pleasure of working closely with Prima Wijaya Kusuma as the Project Manager for the SEHATIN project at MSIB 6 IoT Engineering, Indobot Academy. Prima is an exceptional leader who consistently supports team development. His extensive knowledge and expertise in IoT have been invaluable in ensuring the success of our project. I highly recommend Prima for any future projects. He demonstrates strong leadership qualities and excels in public speaking.',
-    },
-    {
-      name: 'Tri Sunu Wulan Nuari',
-      role: 'Mahasiswa di Universitas Pembangunan Nasional Veteran Jakarta',
-      when: 'July 4, 2024, Tri Sunu worked with Prima on the same team',
-      body: 'Prima Wijaya, Project Manager of the SEHATIN Project at MSIB 6 IoT Engineer Camp Indobot Academy, is an outstanding leader with extensive knowledge in IoT. He consistently supports team development, solves complex problems efficiently, and excels in communication. I highly recommend Prima for leadership roles due to his dedication and strong leadership qualities',
+      name: 'Dendy Mahendra',
+      role: 'Collaborator — ReadCharge Project',
+      quote: 'Prima contributed far beyond technical implementation, demonstrating strong leadership, collaboration, and the ability to communicate complex ideas clearly. His dedication helped the project create real community impact.',
     },
   ];
+  const initials = (n: string) => n.split(' ').filter(Boolean).slice(0, 2).map(w => w[0]).join('');
+
   return (
-    <section id="recommendations" className="py-20 bg-surface">
-      <div className="max-w-[1180px] mx-auto px-6">
-        <SectionHead eyebrow="Read the reviews" title="What people who worked with him say." />
-        <div className="grid md:grid-cols-3 gap-6">
+    <section className="py-24 border-b border-line">
+      <div className="max-w-[1200px] mx-auto px-6">
+        <SectionHeader num="10" eyebrow="Selected Recommendations" title="What collaborators say." />
+
+        <div className="grid md:grid-cols-2 gap-5">
           {recs.map((r, i) => (
             <Reveal key={r.name} delay={i * 90}>
-              <figure className="h-full bg-white border border-hairline rounded-2xl p-7 flex flex-col">
-                <svg className="w-7 h-7 text-accent-soft mb-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden>
-                  <path d="M7.5 6C5 6 3 8 3 10.5S5 15 7.5 15c.3 0 .6 0 .9-.1C7.9 16.7 6.4 18 4.5 18v2c4 0 7-3.3 7-7.6V10.5C11.5 8 9.9 6 7.5 6zm11 0C16 6 14 8 14 10.5s2 4.5 4.5 4.5c.3 0 .6 0 .9-.1-.5 1.8-2 3.1-3.9 3.1v2c4 0 7-3.3 7-7.6V10.5C22.5 8 20.9 6 18.5 6z" />
-                </svg>
-                <blockquote className="text-[13.5px] text-slate-body leading-relaxed flex-1">{r.body}</blockquote>
-                <figcaption className="mt-6 pt-5 border-t border-hairline">
-                  <div className="text-sm font-semibold text-ink">{r.name}</div>
-                  <div className="text-[11.5px] text-slate-body leading-snug mt-1">{r.role}</div>
-                  <div className="text-[10.5px] text-stone mt-2">{r.when}</div>
+              <figure className="card rounded-2xl p-8 h-full flex flex-col">
+                <blockquote className="text-[1rem] leading-[1.7] text-bright/85 flex-1">
+                  &ldquo;{r.quote}&rdquo;
+                </blockquote>
+                <figcaption className="mt-7 pt-6 border-t border-line flex items-center gap-4">
+                  <span aria-hidden className="w-11 h-11 rounded-full border border-line bg-white/[0.06] flex items-center justify-center font-display text-[13px] font-bold text-accent flex-shrink-0">
+                    {initials(r.name)}
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block text-[0.9rem] font-semibold text-bright">{r.name}</span>
+                    <span className="block text-[12px] text-dim leading-snug mt-0.5">{r.role}</span>
+                    <span className="block font-mono text-[10px] uppercase tracking-[0.1em] text-faint mt-1.5">LinkedIn Recommendation</span>
+                  </span>
                 </figcaption>
               </figure>
             </Reveal>
@@ -660,48 +1108,72 @@ function Recommendations() {
   );
 }
 
-// ─── CONTACT ──────────────────────────────────────────────────────────────────
+// ─── 11 BUILD WITH ME ─────────────────────────────────────────────────────────
 
-function Contact() {
-  const links = [
-    { label: 'Email', value: 'primawijayakusuma38@gmail.com', href: 'mailto:primawijayakusuma38@gmail.com' },
-    { label: 'LinkedIn', value: 'in/primawijayakusuma', href: 'https://www.linkedin.com/in/primawijayakusuma/' },
-    { label: 'GitHub', value: 'primawijayakusuma', href: 'https://github.com/primawijayakusuma' },
-    { label: 'Portfolio', value: 'bit.ly/PrimaWijaya', href: 'https://bit.ly/PrimaWijaya' },
+function BuildWithMe() {
+  const areas = [
+    ['Invent & Prototype', 'Turning early technical concepts into architectures, proof-of-concepts, and functional prototypes.'],
+    ['AIoT & Smart Electronics', 'Connected sensing systems combining embedded electronics, IoT, wireless connectivity, data, and intelligent algorithms.'],
+    ['Research → Product', 'Helping translate research concepts into technologies that can be validated, iterated, and developed toward practical products.'],
+    ['Deep-Tech Collaboration', 'Working alongside founders, researchers, and multidisciplinary teams on technically ambitious early-stage ideas.'],
   ];
-  return (
-    <section id="contact" className="py-24 bg-ink relative overflow-hidden">
-      <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[620px] h-[620px] rounded-full bg-accent/12 blur-[140px]" />
-      </div>
-      <div className="relative max-w-[1180px] mx-auto px-6 text-center">
-        <Reveal>
-          <div className="w-24 h-24 rounded-full overflow-hidden mx-auto mb-7 border border-white/15">
-            <Image src="/img/avatar.png" alt="Prima Wijaya Kusuma" width={200} height={200} className="w-full h-full object-cover" />
-          </div>
-          <Eyebrow on="dark">Reach Me</Eyebrow>
-          <h2 className="text-[2.1rem] md:text-[2.8rem] font-medium text-white tracking-[-1.2px] mb-4">
-            Prima Wijaya Kusuma
-          </h2>
-          <p className="text-on-dark-muted mb-12 max-w-md mx-auto">
-            Open to research collaborations, innovation projects, and conversations about smart electronics.
-          </p>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 max-w-3xl mx-auto">
-            {links.map(l => (
-              <a key={l.label} href={l.href}
-                target={l.href.startsWith('http') ? '_blank' : undefined}
-                rel={l.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-                className="group bg-white/[0.04] border border-white/10 rounded-xl px-5 py-4 text-left hover:bg-white/[0.08] hover:border-white/20 transition-all">
-                <div className="text-[10px] font-bold uppercase tracking-widest text-cyan mb-1.5">{l.label}</div>
-                <div className="text-[13px] text-on-dark break-all leading-snug flex items-center gap-1.5">
-                  {l.value}
-                  <span className="text-on-dark-muted group-hover:text-cyan transition-colors flex-shrink-0">
-                    <ArrowUpRight cls="w-3 h-3" />
-                  </span>
-                </div>
-              </a>
+  return (
+    <section id="build" className="relative py-24 border-b border-line overflow-hidden">
+      <div className="absolute inset-0 grid-bg opacity-50" aria-hidden />
+      <div className="absolute bottom-0 left-1/3 w-[600px] h-[600px] rounded-full bg-cyan/[0.06] blur-[150px] pointer-events-none" aria-hidden />
+
+      <div className="relative max-w-[1200px] mx-auto px-6">
+        <Reveal className="max-w-3xl mb-14">
+          <div className="flex items-center gap-3 mb-5">
+            <span className="font-mono text-[11px] text-faint tabular-nums">11</span>
+            <span className="h-px w-6 bg-line-strong" />
+            <Eyebrow>Build with me</Eyebrow>
+          </div>
+          <h2 className="font-display text-[2.2rem] md:text-[3.2rem] font-bold leading-[1.02] tracking-[-0.03em] text-bright mb-7">
+            From an idea to <span className="grad">something real.</span>
+          </h2>
+          <p className="text-[1.05rem] leading-[1.6] text-bright/85 mb-5">
+            I build alongside deep-tech founders, researchers, and multidisciplinary teams — turning early ideas into technologies that can be designed, prototyped, tested, validated, and developed toward real-world applications.
+          </p>
+          <p className="text-[0.94rem] leading-[1.7] text-body">
+            My strongest interests sit at the intersection of AIoT, smart electronics, intelligent sensing, connected systems, and human-centered technology. I am open to collaborations involving new inventions, technical product development, research-to-product translation, prototyping, early-stage technology exploration, and selected engineering consulting engagements.
+          </p>
+        </Reveal>
+
+        <Reveal className="mb-16">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {areas.map(([t, d], i) => (
+              <div key={t} className="card rounded-xl p-6 h-full">
+                <div className="font-mono text-[10px] text-accent tabular-nums mb-4">{String(i + 1).padStart(2, '0')}</div>
+                <h3 className="font-display text-sm font-bold text-bright mb-2.5 leading-snug">{t}</h3>
+                <p className="text-[12.5px] leading-relaxed text-body">{d}</p>
+              </div>
             ))}
+          </div>
+        </Reveal>
+
+        <Reveal>
+          <div className="rounded-2xl border border-line-strong bg-white/[0.035] p-8 md:p-12 grid lg:grid-cols-[1fr_auto] gap-8 items-center">
+            <div>
+              <h3 className="font-display text-[1.6rem] md:text-[2rem] font-bold tracking-[-0.02em] text-bright mb-4">
+                Have an idea worth building?
+              </h3>
+              <p className="text-[0.95rem] leading-relaxed text-body max-w-2xl">
+                Whether it starts as a research question, an engineering challenge, or an early product idea, I am always interested in conversations around technologies that can create meaningful real-world impact.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-3 lg:flex-shrink-0">
+              <a href="mailto:primawijayakusuma38@gmail.com?subject=Let%E2%80%99s%20build%20something"
+                className="group inline-flex items-center gap-2 bg-bright text-void font-semibold text-sm px-6 py-3.5 rounded-full hover:bg-white/90 transition-colors">
+                Let&rsquo;s Build Something
+                <span className="group-hover:translate-x-0.5 transition-transform"><ArrowUpRight /></span>
+              </a>
+              <a href="#contact"
+                className="inline-flex items-center border border-line-strong text-bright font-medium text-sm px-6 py-3.5 rounded-full hover:bg-white/5 transition-colors">
+                Start a Conversation
+              </a>
+            </div>
           </div>
         </Reveal>
       </div>
@@ -709,14 +1181,57 @@ function Contact() {
   );
 }
 
-// ─── FOOTER ───────────────────────────────────────────────────────────────────
+// ─── CONTACT / FOOTER ─────────────────────────────────────────────────────────
 
-function Footer() {
+function Contact() {
+  const links = [
+    { label: 'Email', value: 'primawijayakusuma38@gmail.com', href: 'mailto:primawijayakusuma38@gmail.com' },
+    { label: 'LinkedIn', value: 'in/primawijayakusuma', href: 'https://www.linkedin.com/in/primawijayakusuma/' },
+    { label: 'GitHub', value: 'primawijayakusuma', href: 'https://github.com/primawijayakusuma' },
+  ];
   return (
-    <footer className="bg-ink border-t border-white/8 py-8">
-      <div className="max-w-[1180px] mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-        <p className="text-on-dark-muted text-sm">© {new Date().getFullYear()} Prima Wijayakusuma</p>
-        <p className="text-on-dark-muted text-xs">Innovation Practitioner and Technopreneur · Jakarta, ID</p>
+    <footer id="contact" className="py-20">
+      <div className="max-w-[1200px] mx-auto px-6">
+        <Reveal>
+          <div className="grid lg:grid-cols-[1fr_auto] gap-12 items-end">
+            <div>
+              <Eyebrow>Contact</Eyebrow>
+              <h2 className="font-display text-[2rem] md:text-[2.6rem] font-bold tracking-[-0.025em] text-bright mt-5 mb-4">
+                Prima Wijayakusuma
+              </h2>
+              <p className="text-[0.95rem] text-body max-w-lg">
+                Engineer, innovation practitioner, and technology builder — open to research collaborations, early-stage technology projects, and conversations about what could be built.
+              </p>
+            </div>
+
+            <div className="grid sm:grid-cols-3 lg:grid-cols-1 gap-3 w-full lg:w-[340px]">
+              {links.map(l => (
+                <a key={l.label} href={l.href}
+                  target={l.href.startsWith('http') ? '_blank' : undefined}
+                  rel={l.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+                  className="group card rounded-xl px-5 py-4">
+                  <div className="font-mono text-[10px] uppercase tracking-[0.12em] text-faint mb-1.5">{l.label}</div>
+                  <div className="text-[12.5px] text-bright break-all flex items-center gap-1.5">
+                    {l.value}
+                    <span className="text-dim group-hover:text-accent transition-colors flex-shrink-0">
+                      <ArrowUpRight cls="w-3 h-3" />
+                    </span>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
+
+          <div className="rule mt-14 mb-6" />
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+            <p className="font-mono text-[11px] text-faint">
+              © {new Date().getFullYear()} Prima Wijayakusuma
+            </p>
+            <p className="font-mono text-[11px] text-faint">
+              Engineer · Innovation Practitioner · Technology Builder
+            </p>
+          </div>
+        </Reveal>
       </div>
     </footer>
   );
@@ -726,18 +1241,22 @@ function Footer() {
 
 export default function Home() {
   return (
-    <main className="flex flex-col">
+    <>
       <Nav />
-      <Hero />
-      <About />
-      <Education />
-      <Research />
-      <Awards />
-      <Projects />
-      <Publications />
-      <Recommendations />
+      <main>
+        <Hero />
+        <About />
+        <Experience />
+        <TerraGrow />
+        <Ventures />
+        <SelectedWork />
+        <Research />
+        <Recognition />
+        <Education />
+        <Recommendations />
+        <BuildWithMe />
+      </main>
       <Contact />
-      <Footer />
-    </main>
+    </>
   );
 }
