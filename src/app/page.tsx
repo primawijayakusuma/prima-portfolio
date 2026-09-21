@@ -176,7 +176,7 @@ function Hero() {
           </h1>
 
           <p {...step(160)} className={`${step(160).className} font-display text-[0.95rem] md:text-base font-medium tracking-[0.04em] text-accent mb-8`}>
-            Product Engineer · Innovation Practitioner · Technology Builder · Product Developer
+            Product Engineer · Innovation Practitioner · Technology Builder
           </p>
 
           <p {...step(240)} className={`${step(240).className} text-[1.1rem] md:text-[1.28rem] leading-[1.5] text-bright/90 max-w-[42rem] mb-6`}>
@@ -383,6 +383,7 @@ type Product = {
   bullets?: string[];
   tags?: string[];
   figures?: { src: string; alt: string; cap: string; contain?: boolean }[];
+  stackFigures?: boolean;
   meta?: string[];
   note?: string;
   investment?: string;
@@ -434,6 +435,12 @@ function Work() {
         'The concept explores how rapid physiological assessment, connected sensing, intelligent interpretation, and information continuity can help bridge the gap between first responders, ambulances, and receiving hospitals.',
       ],
       tags: ['MedTech', 'Emergency Care', 'Connected Health', 'Physiological Sensing', 'Product Innovation'],
+      figures: [
+        { src: '/img/mv-logo.png', alt: 'Medivue logo', cap: 'Medivue', contain: true },
+        { src: '/img/mv-team.webp', alt: 'The Medivue founding team: Elina Sakina Haider, Prima Wijayakusuma, and Angeline Mary Marchella', cap: 'Founding team', contain: true },
+        { src: '/img/mv-stage.webp', alt: 'Medivue current stage: pre-seed funding, open to investment, patenting in progress', cap: 'Pre-seed · Open to investment', contain: true },
+      ],
+      stackFigures: true,
       investment: 'Medivue is at pre-seed stage and open for investment to fund development — prototyping, validation, and the path toward deployment. Open to pre-seed investors and strategic partners who share the ambition of improving continuity between first assessment and the care that follows.',
       link: { label: 'Visit Medivue', href: 'https://medivue-corp.vercel.app' },
     },
@@ -651,7 +658,7 @@ function Work() {
 
 function ProductCard({ product: p, delay }: { product: Product; delay: number }) {
   const figures = p.figures ?? [];
-  const wide = figures.length >= 3;
+  const wide = !p.stackFigures && figures.length >= 3;
   return (
     <Reveal delay={delay}>
       <article className="card plain rounded-2xl overflow-hidden">
@@ -723,7 +730,7 @@ function ProductCard({ product: p, delay }: { product: Product; delay: number })
               <figure key={f.src}
                 className={`relative bg-white ${wide && idx === 0 ? 'col-span-2 aspect-[16/9]' : wide ? 'aspect-square' : 'aspect-[16/10]'}`}>
                 <Image src={f.src} alt={f.alt} fill
-                  sizes="(max-width: 1024px) 50vw, 300px"
+                  sizes="(max-width: 1024px) 100vw, 600px"
                   className={f.contain ? 'object-contain p-4' : 'object-cover'} />
                 <figcaption className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/75 to-transparent px-4 pt-8 pb-3 font-mono text-[9.5px] uppercase tracking-[0.1em] text-white/90">
                   {f.cap}
