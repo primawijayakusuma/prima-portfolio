@@ -18,11 +18,12 @@ const SITE = "https://primawijayakusuma.vercel.app";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE),
-  title: "Prima Wijayakusuma — Engineer & Innovation Practitioner",
+  title: "Prima Wijayakusuma — Product Engineer & Innovation Practitioner",
   description:
-    "Engineer and innovation practitioner working across electronics, wireless systems, intelligent sensing, AI, biomedical technology, and product development.",
+    "Product engineer and innovation practitioner working across electronics, wireless systems, intelligent sensing, AI, biomedical technology, and product development.",
   keywords: [
     "Prima Wijayakusuma",
+    "product engineer",
     "engineer",
     "innovation practitioner",
     "technology builder",
@@ -39,7 +40,7 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "Prima Wijayakusuma", url: SITE }],
   openGraph: {
-    title: "Prima Wijayakusuma — Engineer & Innovation Practitioner",
+    title: "Prima Wijayakusuma — Product Engineer & Innovation Practitioner",
     description:
       "Turning scientific and engineering ideas into technologies that can be built, tested, validated, and developed toward real-world products.",
     url: SITE,
@@ -48,9 +49,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Prima Wijayakusuma — Engineer & Innovation Practitioner",
+    title: "Prima Wijayakusuma — Product Engineer & Innovation Practitioner",
     description:
-      "Engineer, innovation practitioner, and technology builder working across AIoT, smart electronics, intelligent sensing, and deep tech.",
+      "Product engineer, innovation practitioner, and technology builder working across AIoT, smart electronics, intelligent sensing, and deep tech.",
   },
 };
 

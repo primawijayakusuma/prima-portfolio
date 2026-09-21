@@ -176,7 +176,7 @@ function Hero() {
           </h1>
 
           <p {...step(160)} className={`${step(160).className} font-display text-[0.95rem] md:text-base font-medium tracking-[0.04em] text-accent mb-8`}>
-            Engineer · Innovation Practitioner · Technology Builder · Product Developer
+            Product Engineer · Innovation Practitioner · Technology Builder · Product Developer
           </p>
 
           <p {...step(240)} className={`${step(240).className} text-[1.1rem] md:text-[1.28rem] leading-[1.5] text-bright/90 max-w-[42rem] mb-6`}>
@@ -382,9 +382,10 @@ type Product = {
   body: string[];
   bullets?: string[];
   tags?: string[];
-  figures: { src: string; alt: string; cap: string; contain?: boolean }[];
+  figures?: { src: string; alt: string; cap: string; contain?: boolean }[];
   meta?: string[];
   note?: string;
+  investment?: string;
   link?: { label: string; href: string };
   recognition?: string;
 };
@@ -433,12 +434,7 @@ function Work() {
         'The concept explores how rapid physiological assessment, connected sensing, intelligent interpretation, and information continuity can help bridge the gap between first responders, ambulances, and receiving hospitals.',
       ],
       tags: ['MedTech', 'Emergency Care', 'Connected Health', 'Physiological Sensing', 'Product Innovation'],
-      note: 'Medivue is currently at an early / pre-seed stage, and is open to conversations with investors and collaborators who share the ambition of improving continuity between first assessment and the care that follows.',
-      figures: [
-        { src: '/img/mv-how.jpg', alt: 'How Medivue works: device, responder-to-care flow, and application', cap: 'System overview' },
-        { src: '/img/mv-device.jpg', alt: 'The Medivue sensing device', cap: 'Sensing device', contain: true },
-        { src: '/img/mv-ambulance.jpg', alt: 'Medivue device in an ambulance beside a patient monitor', cap: 'Continuity in transit' },
-      ],
+      investment: 'Medivue is at pre-seed stage and open for investment to fund development — prototyping, validation, and the path toward deployment. Open to pre-seed investors and strategic partners who share the ambition of improving continuity between first assessment and the care that follows.',
       link: { label: 'Visit Medivue', href: 'https://medivue-corp.vercel.app' },
     },
     {
@@ -654,13 +650,14 @@ function Work() {
 }
 
 function ProductCard({ product: p, delay }: { product: Product; delay: number }) {
-  const wide = p.figures.length >= 3;
+  const figures = p.figures ?? [];
+  const wide = figures.length >= 3;
   return (
     <Reveal delay={delay}>
       <article className="card plain rounded-2xl overflow-hidden">
-        <div className="grid lg:grid-cols-[1fr_1fr]">
+        <div className={`grid ${figures.length ? 'lg:grid-cols-[1fr_1fr]' : ''}`}>
           {/* text */}
-          <div className="p-7 md:p-9">
+          <div className={`p-7 md:p-9 ${figures.length ? '' : 'max-w-3xl'}`}>
             <div className="flex flex-wrap items-center gap-3 mb-3">
               <h3 className="font-display text-2xl font-bold text-bright tracking-[-0.02em]">{p.name}</h3>
               {p.role && <span className="text-[11px] font-medium text-dim border-l border-line pl-3">{p.role}</span>}
@@ -690,6 +687,18 @@ function ProductCard({ product: p, delay }: { product: Product; delay: number })
               </div>
             )}
 
+            {p.investment && (
+              <div className="rounded-xl border border-accent/30 bg-accent/[0.06] px-4 py-3.5 mb-6">
+                <div className="flex items-center gap-2 mb-1.5">
+                  <span className="h-1.5 w-1.5 rounded-full bg-accent flex-shrink-0" />
+                  <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.12em] text-accent">
+                    Open for investment · Pre-seed
+                  </span>
+                </div>
+                <div className="text-[0.87rem] leading-relaxed text-bright/90">{p.investment}</div>
+              </div>
+            )}
+
             {p.tags && (
               <div className="flex flex-wrap gap-2 mb-6">
                 {p.tags.map(t => <Tag key={t}>{t}</Tag>)}
@@ -708,8 +717,9 @@ function ProductCard({ product: p, delay }: { product: Product; delay: number })
           </div>
 
           {/* figures */}
+          {figures.length > 0 && (
           <div className={`grid gap-px bg-line border-t lg:border-t-0 lg:border-l border-line ${wide ? 'grid-cols-2' : 'grid-cols-1'}`}>
-            {p.figures.map((f, idx) => (
+            {figures.map((f, idx) => (
               <figure key={f.src}
                 className={`relative bg-white ${wide && idx === 0 ? 'col-span-2 aspect-[16/9]' : wide ? 'aspect-square' : 'aspect-[16/10]'}`}>
                 <Image src={f.src} alt={f.alt} fill
@@ -721,6 +731,7 @@ function ProductCard({ product: p, delay }: { product: Product; delay: number })
               </figure>
             ))}
           </div>
+          )}
         </div>
       </article>
     </Reveal>
@@ -1405,7 +1416,7 @@ function Contact() {
                 Prima Wijayakusuma
               </h2>
               <p className="text-[0.95rem] text-body max-w-lg">
-                Engineer, innovation practitioner, and technology builder — open to research collaborations, early-stage technology projects, and conversations about what could be built.
+                Product engineer, innovation practitioner, and technology builder — open to research collaborations, early-stage technology projects, and conversations about what could be built.
               </p>
             </div>
 
@@ -1433,7 +1444,7 @@ function Contact() {
               © {new Date().getFullYear()} Prima Wijayakusuma
             </p>
             <p className="font-mono text-[11px] text-faint">
-              Engineer · Innovation Practitioner · Technology Builder
+              Product Engineer · Innovation Practitioner · Technology Builder
             </p>
           </div>
         </Reveal>
