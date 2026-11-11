@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import Image from 'next/image';
 
 // ─── HOOK ─────────────────────────────────────────────────────────────────────
@@ -76,15 +76,86 @@ const ArrowUpRight = ({ cls = 'w-3.5 h-3.5' }: { cls?: string }) => (
   </svg>
 );
 
+// ─── THEME TOGGLE ─────────────────────────────────────────────────────────────
+
+// The <html data-theme> attribute (set before paint in layout.tsx) is the source of truth.
+function subscribeTheme(cb: () => void) {
+  const obs = new MutationObserver(cb);
+  obs.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  return () => obs.disconnect();
+}
+
+function ThemeToggle() {
+  const theme = useSyncExternalStore<'light' | 'dark' | null>(
+    subscribeTheme,
+    () => (document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light'),
+    () => null,
+  );
+
+  const toggle = () => {
+    const next = theme === 'dark' ? 'light' : 'dark';
+    const root = document.documentElement;
+    root.classList.add('theme-fade');
+    root.dataset.theme = next;
+    window.setTimeout(() => root.classList.remove('theme-fade'), 400);
+    try { localStorage.setItem('theme', next); } catch { /* storage unavailable */ }
+  };
+
+  const dark = theme === 'dark';
+  return (
+    <button type="button" onClick={toggle}
+      aria-label={dark ? 'Switch to light theme' : 'Switch to dark theme'}
+      title={dark ? 'Light theme' : 'Dark theme'}
+      className="inline-flex items-center justify-center w-9 h-9 rounded-full border border-line text-bright hover:bg-tint-2 transition-colors">
+      {theme === null ? <span className="w-4 h-4" /> : dark ? (
+        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8} aria-hidden>
+          <circle cx="12" cy="12" r="4" />
+          <path strokeLinecap="round" d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" />
+        </svg>
+      ) : (
+        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8} aria-hidden>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M20.5 14.2A8.5 8.5 0 019.8 3.5 8.5 8.5 0 1020.5 14.2z" />
+        </svg>
+      )}
+    </button>
+  );
+}
+
+// ─── COUNT-UP ─────────────────────────────────────────────────────────────────
+
+function CountUp({ to }: { to: number }) {
+  const [n, setN] = useState(0);
+  useEffect(() => {
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let raf = 0;
+    const start = reduce ? -Infinity : performance.now() + 500;
+    const tick = (t: number) => {
+      const k = Math.min(Math.max((t - start) / 1100, 0), 1);
+      setN(Math.round(to * (1 - Math.pow(1 - k, 3))));
+      if (k < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [to]);
+  return <>{n}</>;
+}
+
 // ─── NAV ──────────────────────────────────────────────────────────────────────
 
 function Nav() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const barRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    const fn = () => setScrolled(window.scrollY > 40);
+    const fn = () => {
+      setScrolled(window.scrollY > 40);
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      barRef.current?.style.setProperty('--p', String(max > 0 ? Math.min(window.scrollY / max, 1) : 0));
+    };
+    fn();
     window.addEventListener('scroll', fn, { passive: true });
-    return () => window.removeEventListener('scroll', fn);
+    window.addEventListener('resize', fn);
+    return () => { window.removeEventListener('scroll', fn); window.removeEventListener('resize', fn); };
   }, []);
 
   const links = [
@@ -113,6 +184,7 @@ function Nav() {
         </div>
 
         <div className="flex items-center gap-3">
+          <ThemeToggle />
           <a href="#booking"
             className="hidden sm:inline-flex items-center gap-1.5 bg-bright text-void text-sm font-semibold px-4 py-2 rounded-full hover:opacity-90 transition-colors">
             Book a call
@@ -127,6 +199,10 @@ function Nav() {
           </button>
         </div>
       </nav>
+
+      <div ref={barRef} className="absolute bottom-0 inset-x-0 h-[2px] pointer-events-none" aria-hidden>
+        <div className="scroll-progress h-full w-full" />
+      </div>
 
       {open && (
         <div className="lg:hidden bg-panel border-t border-line px-6 py-5 flex flex-col gap-4">
@@ -146,17 +222,45 @@ function Nav() {
 function Hero() {
   const [shown, setShown] = useState(false);
   useEffect(() => { const t = setTimeout(() => setShown(true), 60); return () => clearTimeout(t); }, []);
+
+  // Pointer-driven effects write CSS variables directly, so moving the mouse never re-renders React.
+  const heroRef = useRef<HTMLElement>(null);
+  const tiltRef = useRef<HTMLDivElement>(null);
+  const onMove = (e: React.PointerEvent<HTMLElement>) => {
+    if (e.pointerType !== 'mouse') return;
+    const hero = heroRef.current;
+    if (!hero) return;
+    const r = hero.getBoundingClientRect();
+    hero.style.setProperty('--mx', `${e.clientX - r.left}px`);
+    hero.style.setProperty('--my', `${e.clientY - r.top}px`);
+    hero.style.setProperty('--glow-o', '1');
+    const t = tiltRef.current;
+    if (t) {
+      const b = t.getBoundingClientRect();
+      const dx = (e.clientX - (b.left + b.width / 2)) / (window.innerWidth / 2);
+      const dy = (e.clientY - (b.top + b.height / 2)) / (window.innerHeight / 2);
+      t.style.setProperty('--ry', `${Math.max(-1, Math.min(1, dx)) * 7}deg`);
+      t.style.setProperty('--rx', `${Math.max(-1, Math.min(1, dy)) * -6}deg`);
+    }
+  };
+  const onLeave = () => {
+    heroRef.current?.style.setProperty('--glow-o', '0');
+    tiltRef.current?.style.setProperty('--rx', '0deg');
+    tiltRef.current?.style.setProperty('--ry', '0deg');
+  };
   const step = (d: number) => ({
     className: `transition-all duration-700 ${shown ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`,
     style: { transitionDelay: `${d}ms` },
   });
 
   return (
-    <section id="top" className="relative overflow-hidden border-b border-line">
+    <section id="top" ref={heroRef} onPointerMove={onMove} onPointerLeave={onLeave}
+      className="relative overflow-hidden border-b border-line">
       <div className="absolute inset-0 grid-bg opacity-60" aria-hidden />
+      <div className="absolute inset-0 grid-glow pointer-events-none" aria-hidden />
       <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute -top-40 -left-32 w-[620px] h-[620px] rounded-full bg-accent/10 blur-[150px]" />
-        <div className="absolute bottom-[-30%] right-[-10%] w-[520px] h-[520px] rounded-full bg-cyan/[0.07] blur-[130px]" />
+        <div className="blob-a absolute -top-40 -left-32 w-[620px] h-[620px] rounded-full bg-accent/10 blur-[150px]" />
+        <div className="blob-b absolute bottom-[-30%] right-[-10%] w-[520px] h-[520px] rounded-full bg-cyan/[0.07] blur-[130px]" />
       </div>
 
       <div className="relative max-w-[1200px] mx-auto px-6 pt-32 pb-20 md:pt-40 md:pb-28 grid lg:grid-cols-[1.35fr_0.65fr] gap-14 lg:gap-16 items-center">
@@ -172,11 +276,11 @@ function Hero() {
           </div>
 
           <h1 {...step(80)} className={`${step(80).className} font-display text-[clamp(2.4rem,5.6vw,4.1rem)] font-bold leading-[1.02] tracking-[-0.03em] text-bright mb-5`}>
-            Prima Wijayakusuma
+            Prima <span className="grad-shimmer">Wijayakusuma</span>
           </h1>
 
           <p {...step(160)} className={`${step(160).className} font-display text-[0.95rem] md:text-base font-medium tracking-[0.04em] text-accent mb-8`}>
-            Product Engineer · Innovation Practitioner · Technology Builder
+            Product Engineer · Human-Centric Product Developer · Technology Builder
           </p>
 
           <p {...step(240)} className={`${step(240).className} text-[1.1rem] md:text-[1.28rem] leading-[1.5] text-bright/90 max-w-[42rem] mb-6`}>
@@ -214,11 +318,13 @@ function Hero() {
         </div>
 
         <div {...step(300)} className={`${step(300).className} flex lg:justify-end`}>
-          <figure className="relative w-full max-w-[300px]">
-            <div className="absolute -inset-px rounded-2xl bg-gradient-to-b from-white/15 to-transparent" aria-hidden />
-            <div className="relative aspect-[3/4] rounded-2xl overflow-hidden bg-panel-2">
-              <Image src="/img/hero-portrait.jpg" alt="Portrait of Prima Wijayakusuma"
-                fill sizes="(max-width: 1024px) 60vw, 300px" className="object-cover" priority />
+          <figure className="portrait-wrap relative w-full max-w-[300px]">
+            <div ref={tiltRef} className="portrait-tilt float-slow relative">
+              <div className="portrait-halo absolute -inset-3 rounded-[28px]" aria-hidden />
+              <div className="relative aspect-[3/4] rounded-2xl overflow-hidden bg-panel-2 border border-line-strong">
+                <Image src="/img/hero-portrait.jpg" alt="Portrait of Prima Wijayakusuma"
+                  fill sizes="(max-width: 1024px) 60vw, 300px" className="object-cover" priority />
+              </div>
             </div>
           </figure>
         </div>
@@ -228,12 +334,12 @@ function Hero() {
       <div className="relative border-t border-line">
         <div className="max-w-[1200px] mx-auto px-6 py-6 flex flex-wrap gap-x-10 gap-y-4">
           {[
-            ['Peer-reviewed publications', '5'],
-            ['International gold medals', '2'],
-            ['Registered intellectual property', '2'],
+            ['Peer-reviewed publications', 7],
+            ['International gold medals', 2],
+            ['Registered intellectual property', 2],
           ].map(([label, n]) => (
             <div key={label} className="flex items-baseline gap-2.5">
-              <span className="font-display text-sm font-bold text-bright tabular-nums">{n}</span>
+              <span className="font-display text-sm font-bold text-bright tabular-nums"><CountUp to={n as number} /></span>
               <span className="text-[11px] uppercase tracking-[0.12em] text-faint">{label}</span>
             </div>
           ))}
@@ -255,10 +361,10 @@ function About() {
           <Reveal>
             <div className="space-y-6 max-w-2xl">
               <p className="text-[1.06rem] leading-[1.65] text-bright/85">
-                I am an engineer and technology builder working at the intersection of engineering, intelligent systems, product development, and innovation.
+                I am an engineer and technology builder working at the intersection of human-centric product development, emerging technologies, and sustainable innovation.
               </p>
               <p className="text-[0.95rem] leading-[1.75] text-body">
-                I work with scientific and technical ideas from early exploration through engineering design, prototyping, validation, and product development — particularly across AIoT, smart electronics, intelligent sensing, wireless systems, and deep tech.
+                I work with scientific and technical ideas from early exploration through engineering design, prototyping, validation, and product development — particularly across AIoT, smart electronics, intelligent sensing, wireless systems, and deep tech. I am especially drawn to structured hardware development: taking a concept through EVT, DVT, and PVT toward a market-ready product. On the simulation side, I do computational electromagnetic design with Ansys HFSS, CST, and COMSOL.
               </p>
               <p className="text-[0.95rem] leading-[1.75] text-body">
                 My focus is on building{' '}
@@ -411,7 +517,7 @@ function Work() {
 
   const rest: Product[] = [
     {
-      name: 'NOVA', role: 'CEO', kind: 'Human Risk Intelligence · AI · Digital health',
+      name: 'NOVA', role: 'Founder & Hardware Developer', kind: 'Human Risk Intelligence · AI · Digital health',
       tagline: 'Turning fragmented human data into coordinated action.',
       body: [
         'NOVA Intelligence connects continuous human data with caregivers, families, care organizations, and risk partners — turning changing risk into coordinated action.',
@@ -419,7 +525,7 @@ function Work() {
       ],
       bullets: ['Multimodal data fusion', 'Personalized baselines', 'Temporal risk modeling', 'Event intelligence', 'Edge + cloud architecture', 'API-first integration'],
       tags: ['Human Risk Intelligence', 'AI', 'Digital Health', 'Connected Devices', 'Human-Centered Technology'],
-      recognition: 'Most Potential Award — Venture Builders, Startup Alliance China 2026',
+      recognition: 'Grant & Most Potential Award — Venture Builders, Startup Alliance China 2026',
       figures: [
         { src: '/img/nova-ecosystem.jpg', alt: 'NOVA product flow from monitored individual to caregiver and family', cap: 'Signals in, coordinated action out' },
         { src: '/img/nova-app.jpg', alt: 'NOVA caregiver application', cap: 'Caregiver interface', contain: true },
@@ -428,7 +534,7 @@ function Work() {
       link: { label: 'Visit NOVA', href: 'https://nova-body-vital-assistant.vercel.app' },
     },
     {
-      name: 'Medivue', role: 'CIO', kind: 'MedTech · Emergency care · Connected sensing',
+      name: 'Medivue', role: 'Hardware Development & Innovation Lead', kind: 'MedTech · Emergency care · Connected sensing',
       tagline: 'Built for the moments between first contact and definitive care.',
       body: [
         'Medivue is developing a connected rapid assessment system designed to preserve critical physiological context as a patient moves from the scene of an emergency toward definitive hospital care.',
@@ -441,20 +547,8 @@ function Work() {
         { src: '/img/mv-stage.webp', alt: 'Medivue current stage: pre-seed funding, open to investment, patenting in progress', cap: 'Pre-seed · Open to investment', contain: true },
       ],
       stackFigures: true,
-      investment: 'Medivue is at pre-seed stage and open for investment to fund development — prototyping, validation, and the path toward deployment. Open to pre-seed investors and strategic partners who share the ambition of improving continuity between first assessment and the care that follows.',
+      investment: 'Medivue is at pre-seed stage and open for investment to fund development — prototyping, validation, and the path toward deployment. Open to pre-seed investors and strategic partners who share the ambition of improving continuity between first assessment and the care that follows. The team is currently applying to Startup SG Tech in Singapore, in collaboration with a Singapore-based investor.',
       link: { label: 'Visit Medivue', href: 'https://medivue-corp.vercel.app' },
-    },
-    {
-      name: 'MUADIPS', kind: 'Renewable energy · Automated tracking',
-      tagline: 'Solar panels that follow the sun through the day.',
-      body: [
-        'Multi Angle Direction and Automated Tracking Solar Panel System — a solar energy system that adjusts panel orientation to follow the sun, improving energy capture compared with fixed installations.',
-      ],
-      bullets: ['Simple motorised tracking mechanism', 'Low-cost, environmentally friendly materials', 'Straightforward to deploy and operate'],
-      figures: [
-        { src: '/img/muadips-poster.jpg', alt: 'MUADIPS research poster', cap: 'Research poster', contain: true },
-      ],
-      note: 'Built for a collaborative solar automation and controller project in 2024.',
     },
     {
       name: 'ReadCharge', kind: 'Solar literacy · Community technology',
@@ -497,11 +591,12 @@ function Work() {
         />
 
         {/* ── FLAGSHIP: TERRAGROW ── */}
-        <div id="terragrow" className="mb-6 rounded-3xl border border-line-strong bg-white overflow-hidden">
+        <div id="terragrow" className="mb-6 rounded-3xl border border-line-strong bg-surface overflow-hidden">
           <div className="p-7 md:p-10 lg:p-12">
             <div className="flex flex-wrap items-center gap-3 mb-6">
               <span className="text-[10px] font-semibold tracking-[0.16em] uppercase text-void bg-accent rounded-full px-2.5 py-1">Flagship</span>
               <Eyebrow>Featured Engineering Case Study</Eyebrow>
+              <span className="text-[11px] font-medium text-dim border-l border-line pl-3">Inventor</span>
             </div>
 
             <h3 className="font-display text-[2.4rem] md:text-[3.4rem] font-bold leading-[1] tracking-[-0.035em] text-bright mb-5">
@@ -550,7 +645,7 @@ function Work() {
             </div>
 
             {/* journey */}
-            <div className="rounded-2xl border border-line bg-white p-7 md:p-8 mb-6">
+            <div className="rounded-2xl border border-line bg-surface p-7 md:p-8 mb-6">
               <Eyebrow>Research to product</Eyebrow>
               <ol className="grid sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-7 mt-7">
                 {journey.map(([stage, desc], i) => (
@@ -605,7 +700,7 @@ function Work() {
             </div>
 
             {/* poster + recognition */}
-            <div className="rounded-2xl border border-line bg-white p-7 md:p-9">
+            <div className="rounded-2xl border border-line bg-surface p-7 md:p-9">
               <div>
                 <Eyebrow>International Recognition</Eyebrow>
                 <ul className="mt-5 space-y-2.5">
@@ -747,6 +842,13 @@ function ProductCard({ product: p, delay }: { product: Product; delay: number })
 
 // ─── 07 RESEARCH & PUBLICATIONS ───────────────────────────────────────────────
 
+// A card that is a link when the work has a public URL, and a plain block otherwise.
+function Wrapper({ href, className, children }: { href?: string; className: string; children: React.ReactNode }) {
+  return href
+    ? <a href={href} target="_blank" rel="noopener noreferrer" className={className}>{children}</a>
+    : <div className={className}>{children}</div>;
+}
+
 function Research() {
   const featured = {
     year: '2025',
@@ -758,20 +860,31 @@ function Research() {
     doi: '10.1016/j.ohx.2025.e00724',
   };
 
-  const pubs = [
+  const pubs: { year: string; title: string; venue: string; type: string; href?: string }[] = [
+    {
+      year: '2026',
+      title: 'A Compact MLP Model with Robustness Analysis for Hydrometeor Classification in Polarimetric Electromagnetic Sensing',
+      venue: '2026 3rd International Conference on Broadband Communications, Wireless Sensors and Powering (BCWSP)',
+      type: 'Conference paper · First author',
+    },
+    {
+      year: '2026',
+      title: 'Multimodal Deep Learning Architecture for Fall Detection Using Kinematics and Heart Rate Sensors',
+      venue: '2026 3rd International Conference on Broadband Communications, Wireless Sensors and Powering (BCWSP)',
+      type: 'Conference paper · Third author',
+    },
+    {
+      year: '—',
+      title: 'Can an Unlabelled Early-Drive Score Gate a Drowsiness Alarm for a New Driver? A Nested Leave-One-Person-Out Test with Classical EOG Models',
+      venue: 'Journal of Electronics, Electromedical Engineering, and Medical Informatics',
+      type: 'Journal article · Third author · Accepted',
+    },
     {
       year: '2023',
       title: 'Kalman Filter for Tracking a Noisy Cosinousoidal Signal',
       venue: 'The 9th International Conference on Computer and Communication Engineering',
       type: 'Conference paper · IEEE Xplore · Scopus-indexed',
       href: 'https://ieeexplore.ieee.org/abstract/document/10246039',
-    },
-    {
-      year: '2023',
-      title: 'A Robot Arm Movement System Using A System Of Four Degrees Of Freedom To Transport Goods',
-      venue: 'International Journal for Research Trends and Innovation · Volume 8, Issue 7',
-      type: 'Journal article',
-      href: 'https://www.ijrti.org/papers/IJRTI2307114.pdf',
     },
     {
       year: '2024',
@@ -846,8 +959,8 @@ function Research() {
         {/* Remaining publications */}
         <div className="space-y-3 mb-16">
           {pubs.map((p, i) => (
-            <Reveal key={p.href} delay={i * 60}>
-              <a href={p.href} target="_blank" rel="noopener noreferrer"
+            <Reveal key={p.title} delay={i * 60}>
+              <Wrapper href={p.href}
                 className="group card rounded-xl p-6 grid sm:grid-cols-[54px_1fr_auto] gap-4 sm:gap-6 items-start">
                 <span className="font-mono text-[11px] text-accent tabular-nums pt-1">{p.year}</span>
                 <div className="min-w-0">
@@ -857,10 +970,12 @@ function Research() {
                   <p className="font-mono text-[11px] text-dim leading-relaxed">{p.venue}</p>
                   <p className="font-mono text-[10.5px] text-faint mt-1">{p.type}</p>
                 </div>
-                <span className="text-dim group-hover:text-accent transition-colors pt-1 hidden sm:block">
-                  <ArrowUpRight />
-                </span>
-              </a>
+                {p.href && (
+                  <span className="text-dim group-hover:text-accent transition-colors pt-1 hidden sm:block">
+                    <ArrowUpRight />
+                  </span>
+                )}
+              </Wrapper>
             </Reveal>
           ))}
         </div>
@@ -903,7 +1018,7 @@ function Recognition() {
       note: 'Received through Venture Builders at Startup Alliance China 2026 for NOVA and its technology direction.',
     },
     {
-      award: 'Gold Medal', org: 'The World Young Inventors Exhibition (WYIE) — MINDS', country: 'Malaysia', year: '2023',
+      award: 'Gold Medal', org: 'The World Young Inventors Exhibition (WYIE) — MINDS', country: 'Malaysia', year: '2024',
       project: 'TerraGrow', img: '/img/rec-itex-gold.jpg',
       note: 'Presented at the 35th ITEX in Kuala Lumpur under the WYIE category.',
     },
@@ -913,7 +1028,7 @@ function Recognition() {
       note: 'Special Award for Incubation Opportunity from the Korea Invention Promotion Association.',
     },
     {
-      award: 'The Best International Inventions', org: 'Korea Invention Promotion Association (KIPA)', country: 'Korea', year: '2023',
+      award: 'The Best International Inventions', org: 'Korea Invention Promotion Association (KIPA)', country: 'Korea', year: '2024',
       project: 'TerraGrow', img: '/img/rec-kipa.jpg',
       note: '',
     },
@@ -990,13 +1105,14 @@ function Recognition() {
 // ─── 09 EDUCATION ─────────────────────────────────────────────────────────────
 
 function Education() {
-  const main = [
+  const main: { school: string; degree: string; detail: string; period: string; img: string; thesis?: string }[] = [
     {
       school: 'Beijing Institute of Technology',
       degree: 'Master’s Degree',
       detail: 'School of Integrated Circuits and Electronics',
       period: '2025 — Present',
       img: '/img/edu-bit.jpg',
+      thesis: 'Design and Surrogate-Assisted Optimization of a Compact AMC-Backed Antenna for 2.45-GHz Body-Area Applications',
     },
     {
       school: 'Universitas Mercu Buana',
@@ -1023,6 +1139,12 @@ function Education() {
                   <h3 className="font-display text-base font-bold text-bright leading-snug mb-1.5">{e.school}</h3>
                   <p className="text-[0.87rem] text-body leading-snug mb-1">{e.degree}</p>
                   <p className="text-[12px] text-dim leading-snug">{e.detail}</p>
+                  {e.thesis && (
+                    <p className="text-[12px] leading-snug text-body mt-3">
+                      <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-accent mr-1.5">Thesis</span>
+                      {e.thesis}
+                    </p>
+                  )}
                 </div>
               </article>
             </Reveal>
@@ -1259,7 +1381,7 @@ function Booking() {
     }
   };
 
-  const field = 'w-full bg-white border border-line rounded-xl px-4 py-3 text-[0.92rem] text-bright placeholder:text-faint outline-none focus:border-accent focus:ring-2 focus:ring-accent/15 transition-all';
+  const field = 'w-full bg-void border border-line rounded-xl px-4 py-3 text-[0.92rem] text-bright placeholder:text-faint outline-none focus:border-accent focus:ring-2 focus:ring-accent/15 transition-all';
   const label = 'block text-[0.85rem] font-medium text-bright mb-2';
 
   return (
@@ -1285,7 +1407,7 @@ function Booking() {
               </p>
             </div>
           ) : state === 'fallback' ? (
-            <div className="rounded-2xl border border-line bg-white p-7 md:p-9">
+            <div className="rounded-2xl border border-line bg-surface p-7 md:p-9">
               <h3 className="font-display text-lg font-bold text-bright mb-3">One more step</h3>
               <p className="text-[0.92rem] leading-relaxed text-body mb-7">
                 Nothing has been sent yet. Either open it in your mail app, or copy the message below and send it however you prefer — both reach the same inbox.
@@ -1317,7 +1439,7 @@ function Booking() {
               </div>
             </div>
           ) : (
-            <form onSubmit={submit} className="relative rounded-2xl border border-line bg-white p-7 md:p-9 shadow-[0_10px_40px_rgba(11,18,32,0.05)]">
+            <form onSubmit={submit} className="relative rounded-2xl border border-line bg-surface p-7 md:p-9 shadow-[0_10px_40px_var(--shadow-card)]">
               <div className="grid sm:grid-cols-2 gap-5 mb-5">
                 <div>
                   <label htmlFor="b-name" className={label}>Full Name *</label>
@@ -1423,7 +1545,7 @@ function Contact() {
                 Prima Wijayakusuma
               </h2>
               <p className="text-[0.95rem] text-body max-w-lg">
-                Product engineer, innovation practitioner, and technology builder — open to research collaborations, early-stage technology projects, and conversations about what could be built.
+                Product engineer, human-centric product developer, and technology builder — open to research collaborations, early-stage technology projects, and conversations about what could be built.
               </p>
             </div>
 
@@ -1451,7 +1573,7 @@ function Contact() {
               © {new Date().getFullYear()} Prima Wijayakusuma
             </p>
             <p className="font-mono text-[11px] text-faint">
-              Product Engineer · Innovation Practitioner · Technology Builder
+              Product Engineer · Human-Centric Product Developer · Technology Builder
             </p>
           </div>
         </Reveal>

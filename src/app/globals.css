@@ -1,9 +1,10 @@
 @import "tailwindcss";
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   LIGHT THEME.
-   Every colour the page uses is defined here. To go back to the dark theme,
-   swap this block for the one in commit 21eadcc — no component changes needed.
+   THEMES.
+   Light is the default; the dark palette overrides the same tokens under
+   html[data-theme="dark"] (set before first paint by the script in layout.tsx).
+   Components only use these tokens, so they follow the theme automatically.
    ───────────────────────────────────────────────────────────────────────────── */
 
 @theme {
@@ -18,6 +19,8 @@
   --color-tint: rgba(11, 18, 32, 0.022);
   --color-tint-2: rgba(11, 18, 32, 0.045);
   --color-card: var(--color-tint);
+  /* Raised surface for text-bearing cards (white in light, lifted navy in dark) */
+  --color-surface: #ffffff;
 
   /* Text — "bright" is the strongest text colour, "void" its inverse */
   --color-bright: #0b1220;
@@ -35,8 +38,63 @@
   --font-sans: var(--font-inter), system-ui, sans-serif;
 }
 
+/* Non-@theme helpers that also change per theme */
+:root {
+  color-scheme: light;
+  --grad-from: #1a63e0;
+  --grad-to: #0d8fa5;
+  --grid-line: rgba(11, 18, 32, 0.045);
+  --grid-glow: rgba(26, 99, 224, 0.28);
+  --rule-a: rgba(26, 99, 224, 0.6);
+  --rule-b: rgba(11, 18, 32, 0.14);
+  --rule-c: rgba(11, 18, 32, 0.07);
+  --shadow-card: rgba(11, 18, 32, 0.06);
+  --shadow-card-2: rgba(11, 18, 32, 0.07);
+  --sel: rgba(26, 99, 224, 0.18);
+  --scroll-track: #eceff4;
+  --scroll-thumb: #c3cad6;
+}
+
+html[data-theme="dark"] {
+  color-scheme: dark;
+
+  --color-void: #070b14;
+  --color-panel: #0b111d;
+  --color-panel-2: #121a2b;
+  --color-surface: #0f1726;
+  --color-line: rgba(255, 255, 255, 0.10);
+  --color-line-strong: rgba(255, 255, 255, 0.22);
+  --color-tint: rgba(255, 255, 255, 0.03);
+  --color-tint-2: rgba(255, 255, 255, 0.06);
+  --color-bright: #eef2f9;
+  --color-body: rgba(238, 242, 249, 0.80);
+  --color-dim: rgba(238, 242, 249, 0.68);
+  --color-faint: rgba(238, 242, 249, 0.60);
+  --color-accent: #6aa5ff;
+  --color-accent-deep: #9cc2ff;
+  --color-cyan: #2dd4e6;
+
+  --grad-from: #6aa5ff;
+  --grad-to: #2dd4e6;
+  --grid-line: rgba(255, 255, 255, 0.05);
+  --grid-glow: rgba(106, 165, 255, 0.30);
+  --rule-a: rgba(106, 165, 255, 0.7);
+  --rule-b: rgba(255, 255, 255, 0.16);
+  --rule-c: rgba(255, 255, 255, 0.07);
+  --shadow-card: rgba(0, 0, 0, 0.40);
+  --shadow-card-2: rgba(0, 0, 0, 0.45);
+  --sel: rgba(106, 165, 255, 0.30);
+  --scroll-track: #0b111d;
+  --scroll-thumb: #2a3550;
+}
+
 html {
   scroll-behavior: smooth;
+}
+
+/* Smooth cross-fade when the theme is switched (not on first paint) */
+html.theme-fade, html.theme-fade * {
+  transition: background-color 0.35s ease, border-color 0.35s ease, color 0.35s ease, fill 0.35s ease !important;
 }
 
 body {
@@ -48,7 +106,7 @@ body {
 }
 
 ::selection {
-  background: rgba(26, 99, 224, 0.18);
+  background: var(--sel);
 }
 
 /* ── scroll reveal ── */
@@ -63,28 +121,98 @@ body {
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .reveal { opacity: 1; transform: none; transition: none; }
+  .blob-a, .blob-b, .portrait-halo, .float-slow, .grad-shimmer { animation: none; }
+  .portrait-tilt { transform: none; transition: none; }
+  .grid-glow { display: none; }
 }
 
 /* ── gradient text ── */
 .grad {
-  background: linear-gradient(100deg, #1a63e0 0%, #0d8fa5 100%);
+  background: linear-gradient(100deg, var(--grad-from) 0%, var(--grad-to) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
+/* Slow-moving shimmer for the hero name */
+.grad-shimmer {
+  background: linear-gradient(100deg, var(--grad-from), var(--grad-to), var(--grad-from));
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 9s ease-in-out infinite;
+}
+@keyframes shimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
 /* ── engineering grid ── */
 .grid-bg {
   background-image:
-    linear-gradient(to right, rgba(11, 18, 32, 0.045) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(11, 18, 32, 0.045) 1px, transparent 1px);
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
   background-size: 64px 64px;
+}
+
+/* Same grid in accent colour, revealed only around the pointer (--mx / --my) */
+.grid-glow {
+  background-image:
+    linear-gradient(to right, var(--grid-glow) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-glow) 1px, transparent 1px);
+  background-size: 64px 64px;
+  -webkit-mask-image: radial-gradient(260px circle at var(--mx, 50%) var(--my, 30%), #000, transparent 70%);
+  mask-image: radial-gradient(260px circle at var(--mx, 50%) var(--my, 30%), #000, transparent 70%);
+  opacity: var(--glow-o, 0);
+  transition: opacity 0.4s ease;
+}
+
+/* ── hero ambient motion ── */
+.blob-a { animation: drift-a 18s ease-in-out infinite; }
+.blob-b { animation: drift-b 22s ease-in-out infinite; }
+@keyframes drift-a {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(70px, 50px, 0) scale(1.12); }
+}
+@keyframes drift-b {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(-60px, -40px, 0) scale(1.1); }
+}
+
+/* Portrait: rotating conic halo + pointer tilt (--rx / --ry) */
+.portrait-wrap { perspective: 900px; }
+.portrait-tilt {
+  transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transition: transform 0.25s ease-out;
+  transform-style: preserve-3d;
+}
+.portrait-halo {
+  background: conic-gradient(from var(--halo-a, 0deg), var(--grad-from), transparent 30%, var(--grad-to) 55%, transparent 80%, var(--grad-from));
+  animation: halo-spin 10s linear infinite;
+  filter: blur(14px);
+  opacity: 0.55;
+}
+@property --halo-a { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+@keyframes halo-spin { to { --halo-a: 360deg; } }
+
+.float-slow { animation: float-slow 7s ease-in-out infinite; }
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+/* Scroll progress bar in the nav */
+.scroll-progress {
+  transform-origin: 0 50%;
+  transform: scaleX(var(--p, 0));
+  background: linear-gradient(to right, var(--grad-from), var(--grad-to));
 }
 
 /* ── hairline rule with a lit left edge ── */
 .rule {
   height: 1px;
-  background: linear-gradient(to right, rgba(26, 99, 224, 0.6), rgba(11, 18, 32, 0.14) 22%, rgba(11, 18, 32, 0.07));
+  background: linear-gradient(to right, var(--rule-a), var(--rule-b) 22%, var(--rule-c));
 }
 
 /* ── card ── */
@@ -97,14 +225,14 @@ body {
 .card:hover {
   border-color: var(--color-line-strong);
   background: var(--color-tint-2);
-  box-shadow: 0 10px 30px rgba(11, 18, 32, 0.06);
+  box-shadow: 0 10px 30px var(--shadow-card);
 }
 .card-lift:hover { transform: translateY(-2px); }
 
 /* Pure-white variant, for the products section where images sit flush on the
    page and any grey wash would read as a frame around them. */
-.card.plain { background: #ffffff; }
-.card.plain:hover { background: #ffffff; box-shadow: 0 10px 30px rgba(11, 18, 32, 0.07); }
+.card.plain { background: var(--color-surface); }
+.card.plain:hover { background: var(--color-surface); box-shadow: 0 10px 30px var(--shadow-card-2); }
 
 /* ── focus visibility ── */
 a:focus-visible,
@@ -116,6 +244,6 @@ button:focus-visible {
 
 /* ── scrollbar ── */
 ::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: #eceff4; }
-::-webkit-scrollbar-thumb { background: #c3cad6; border-radius: 3px; }
+::-webkit-scrollbar-track { background: var(--scroll-track); }
+::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--color-accent); }
