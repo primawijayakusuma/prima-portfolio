@@ -402,7 +402,7 @@ function About() {
 // ─── 03 EXPERIENCE ────────────────────────────────────────────────────────────
 
 function Experience() {
-  const roles = [
+  const roles: { title: string; org: string; period: string; place: string; body: string[]; tags: string[]; img: string; imgAlt: string; contain?: boolean; link?: { label: string; href: string } }[] = [
     {
       title: 'Assistant Network Manager',
       org: 'UN Sustainable Development Solutions Network Indonesia',
@@ -430,6 +430,7 @@ function Experience() {
       img: '/img/sehatin-logo-v2.png',
       imgAlt: 'SEHATIN logo',
       contain: true,
+      link: { label: 'SEHATIN on LinkedIn', href: 'https://www.linkedin.com/company/89914409' },
     },
   ];
 
@@ -463,6 +464,13 @@ function Experience() {
                   <div className="flex flex-wrap gap-2">
                     {r.tags.map(t => <Tag key={t}>{t}</Tag>)}
                   </div>
+                  {r.link && (
+                    <a href={r.link.href} target="_blank" rel="noopener noreferrer"
+                      className="group inline-flex items-center gap-2 mt-5 text-sm font-semibold text-bright hover:text-accent transition-colors">
+                      {r.link.label}
+                      <span className="group-hover:translate-x-0.5 transition-transform"><ArrowUpRight /></span>
+                    </a>
+                  )}
                 </div>
 
                 <div className="lg:text-right lg:min-w-[140px]">
