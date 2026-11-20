@@ -561,7 +561,7 @@ function Work() {
         { src: '/img/readcharge-poster.jpg', alt: 'ReadCharge concept and engineering poster', cap: 'Concept and engineering', contain: true },
         { src: '/img/readcharge-render.png', alt: 'ReadCharge solar reading station', cap: 'Station render', contain: true },
       ],
-      note: 'Developed under a DIKTI research grant, with results published in Jurnal Abdi Masyarakat.',
+      note: 'Developed under a research grant from the Ministry of Education and Research Indonesia, with results published in Jurnal Abdi Masyarakat.',
     },
     {
       name: 'MBERR', kind: 'Research centre · Energy harvesting',
@@ -917,8 +917,8 @@ function Research() {
     },
     {
       year: '2024',
-      title: 'DIKTI Research Grant',
-      org: 'Directorate General of Higher Education, Indonesia',
+      title: 'National Research Grant',
+      org: 'Ministry of Education and Research Indonesia',
       body: 'Awarded for the development of ReadCharge, an energy harvesting and storage system aimed at power solutions for remote areas.',
     },
   ];
