@@ -548,7 +548,7 @@ function Work() {
       ],
       stackFigures: true,
       investment: 'Medivue is at pre-seed stage and open for investment to fund development — prototyping, validation, and the path toward deployment. Open to pre-seed investors and strategic partners who share the ambition of improving continuity between first assessment and the care that follows. The team is currently applying to Startup SG Tech in Singapore, in collaboration with a Singapore-based investor.',
-      link: { label: 'Visit Medivue', href: 'https://medivue-corp.vercel.app' },
+      link: { label: 'Visit Medivue', href: 'https://www.medivue.tech/' },
     },
     {
       name: 'ReadCharge', kind: 'Solar literacy · Community technology',
