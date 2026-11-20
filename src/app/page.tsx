@@ -891,7 +891,7 @@ function Research() {
       year: '2023',
       title: 'Kalman Filter for Tracking a Noisy Cosinousoidal Signal',
       venue: 'The 9th International Conference on Computer and Communication Engineering',
-      type: 'Conference paper · IEEE Xplore · Scopus-indexed',
+      type: 'Conference paper · IEEE Xplore · Scopus-indexed · DOI 10.1109/ICCCE58854.2023.10246039',
       href: 'https://ieeexplore.ieee.org/document/10246039',
     },
     {
