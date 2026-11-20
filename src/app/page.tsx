@@ -864,14 +864,14 @@ function Research() {
     {
       year: '2026',
       title: 'A Compact MLP Model with Robustness Analysis for Hydrometeor Classification in Polarimetric Electromagnetic Sensing',
-      venue: '2026 3rd International Conference on Broadband Communications, Wireless Sensors and Powering (BCWSP)',
-      type: 'Conference paper · First author',
+      venue: '2026 3rd International Conference on Broadband Communications, Wireless Sensors and Powering (BCWSP) — Jakarta, 4 November 2026',
+      type: 'Conference paper · First author · Accepted and presented',
     },
     {
       year: '2026',
       title: 'Multimodal Deep Learning Architecture for Fall Detection Using Kinematics and Heart Rate Sensors',
-      venue: '2026 3rd International Conference on Broadband Communications, Wireless Sensors and Powering (BCWSP)',
-      type: 'Conference paper · Third author',
+      venue: '2026 3rd International Conference on Broadband Communications, Wireless Sensors and Powering (BCWSP) — Jakarta, 4 November 2026',
+      type: 'Conference paper · Third author · Accepted and presented',
     },
     {
       year: '—',
