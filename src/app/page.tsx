@@ -427,7 +427,7 @@ function Experience() {
         'NOVA emerged as its first flagship venture, extending this mission from knowledge dissemination toward technology and venture development.',
       ],
       tags: ['Healthcare Innovation', 'Science Communication', 'Biomedical Engineering', 'Innovation Ecosystem'],
-      img: '/img/sehatin-logo.png',
+      img: '/img/sehatin-logo-v2.png',
       imgAlt: 'SEHATIN logo',
       contain: true,
     },
