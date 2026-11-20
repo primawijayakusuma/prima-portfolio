@@ -862,10 +862,10 @@ function Research() {
 
   const pubs: { year: string; title: string; venue: string; type: string; href?: string }[] = [
     {
-      year: '2026',
-      title: 'A Compact MLP Model with Robustness Analysis for Hydrometeor Classification in Polarimetric Electromagnetic Sensing',
-      venue: '2026 3rd International Conference on Broadband Communications, Wireless Sensors and Powering (BCWSP) — Jakarta, 4 November 2026',
-      type: 'Conference paper · First author · Accepted and presented',
+      year: '—',
+      title: 'Can an Unlabelled Early-Drive Score Gate a Drowsiness Alarm for a New Driver? A Nested Leave-One-Person-Out Test with Classical EOG Models',
+      venue: 'Journal of Electronics, Electromedical Engineering, and Medical Informatics',
+      type: 'Journal article · Third author · Accepted',
     },
     {
       year: '2026',
@@ -874,10 +874,10 @@ function Research() {
       type: 'Conference paper · Third author · Accepted and presented',
     },
     {
-      year: '—',
-      title: 'Can an Unlabelled Early-Drive Score Gate a Drowsiness Alarm for a New Driver? A Nested Leave-One-Person-Out Test with Classical EOG Models',
-      venue: 'Journal of Electronics, Electromedical Engineering, and Medical Informatics',
-      type: 'Journal article · Third author · Accepted',
+      year: '2026',
+      title: 'A Compact MLP Model with Robustness Analysis for Hydrometeor Classification in Polarimetric Electromagnetic Sensing',
+      venue: '2026 3rd International Conference on Broadband Communications, Wireless Sensors and Powering (BCWSP) — Jakarta, 4 November 2026',
+      type: 'Conference paper · First author · Accepted and presented',
     },
     {
       year: '2023',
@@ -923,6 +923,34 @@ function Research() {
     },
   ];
 
+  const recent = pubs.slice(0, 3);
+  const earlier = pubs.slice(3);
+
+  const renderPubs = (list: typeof pubs, className: string) => (
+    <div className={className}>
+      {list.map((p, i) => (
+        <Reveal key={p.title} delay={i * 60}>
+          <Wrapper href={p.href}
+            className="group card rounded-xl p-6 grid sm:grid-cols-[54px_1fr_auto] gap-4 sm:gap-6 items-start">
+            <span className="font-mono text-[11px] text-accent tabular-nums pt-1">{p.year}</span>
+            <div className="min-w-0">
+              <h3 className="text-[0.95rem] font-semibold leading-snug text-bright group-hover:text-accent transition-colors mb-2">
+                {p.title}
+              </h3>
+              <p className="font-mono text-[11px] text-dim leading-relaxed">{p.venue}</p>
+              <p className="font-mono text-[10.5px] text-faint mt-1">{p.type}</p>
+            </div>
+            {p.href && (
+              <span className="text-dim group-hover:text-accent transition-colors pt-1 hidden sm:block">
+                <ArrowUpRight />
+              </span>
+            )}
+          </Wrapper>
+        </Reveal>
+      ))}
+    </div>
+  );
+
   return (
     <section id="research" className="py-24 bg-panel border-b border-line">
       <div className="max-w-[1200px] mx-auto px-6">
@@ -932,6 +960,9 @@ function Research() {
           title="Research &amp; Publications"
           sub="Peer-reviewed work across sensing, electronics, wireless systems, intelligent systems, and engineering applications."
         />
+
+        {/* Most recent publications */}
+        {renderPubs(recent, 'space-y-3 mb-5')}
 
         {/* Featured publication */}
         <Reveal className="mb-5">
@@ -956,29 +987,8 @@ function Research() {
           </a>
         </Reveal>
 
-        {/* Remaining publications */}
-        <div className="space-y-3 mb-16">
-          {pubs.map((p, i) => (
-            <Reveal key={p.title} delay={i * 60}>
-              <Wrapper href={p.href}
-                className="group card rounded-xl p-6 grid sm:grid-cols-[54px_1fr_auto] gap-4 sm:gap-6 items-start">
-                <span className="font-mono text-[11px] text-accent tabular-nums pt-1">{p.year}</span>
-                <div className="min-w-0">
-                  <h3 className="text-[0.95rem] font-semibold leading-snug text-bright group-hover:text-accent transition-colors mb-2">
-                    {p.title}
-                  </h3>
-                  <p className="font-mono text-[11px] text-dim leading-relaxed">{p.venue}</p>
-                  <p className="font-mono text-[10.5px] text-faint mt-1">{p.type}</p>
-                </div>
-                {p.href && (
-                  <span className="text-dim group-hover:text-accent transition-colors pt-1 hidden sm:block">
-                    <ArrowUpRight />
-                  </span>
-                )}
-              </Wrapper>
-            </Reveal>
-          ))}
-        </div>
+        {/* Earlier publications */}
+        {renderPubs(earlier, 'space-y-3 mb-16')}
 
         {/* Research activity */}
         <Reveal>
