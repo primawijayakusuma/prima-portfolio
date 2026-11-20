@@ -870,13 +870,13 @@ function Research() {
     {
       year: '2026',
       title: 'Multimodal Deep Learning Architecture for Fall Detection Using Kinematics and Heart Rate Sensors',
-      venue: '2026 3rd International Conference on Broadband Communications, Wireless Sensors and Powering (BCWSP) — Jakarta, 4 November 2026',
+      venue: '2026 3rd IEEE International Conference on Broadband Communication, Wireless Sensors and Powering (BCWSP) — Jakarta, 4 November 2026',
       type: 'Conference paper · Third author · Accepted and presented',
     },
     {
       year: '2026',
       title: 'A Compact MLP Model with Robustness Analysis for Hydrometeor Classification in Polarimetric Electromagnetic Sensing',
-      venue: '2026 3rd International Conference on Broadband Communications, Wireless Sensors and Powering (BCWSP) — Jakarta, 4 November 2026',
+      venue: '2026 3rd IEEE International Conference on Broadband Communication, Wireless Sensors and Powering (BCWSP) — Jakarta, 4 November 2026',
       type: 'Conference paper · First author · Accepted and presented',
     },
     {
@@ -884,7 +884,7 @@ function Research() {
       title: 'Kalman Filter for Tracking a Noisy Cosinousoidal Signal',
       venue: 'The 9th International Conference on Computer and Communication Engineering',
       type: 'Conference paper · IEEE Xplore · Scopus-indexed',
-      href: 'https://ieeexplore.ieee.org/abstract/document/10246039',
+      href: 'https://ieeexplore.ieee.org/document/10246039',
     },
     {
       year: '2024',
