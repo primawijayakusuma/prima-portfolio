@@ -322,7 +322,7 @@ function Hero() {
             <div ref={tiltRef} className="portrait-tilt float-slow relative">
               <div className="portrait-halo absolute -inset-3 rounded-[28px]" aria-hidden />
               <div className="relative aspect-[3/4] rounded-2xl overflow-hidden bg-panel-2 border border-line-strong">
-                <Image src="/img/hero-portrait.jpg" alt="Portrait of Prima Wijayakusuma"
+                <Image src="/img/hero-portrait-v2.jpg" alt="Portrait of Prima Wijayakusuma"
                   fill sizes="(max-width: 1024px) 60vw, 300px" className="object-cover" priority />
               </div>
             </div>
