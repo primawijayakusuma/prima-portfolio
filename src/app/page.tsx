@@ -1061,8 +1061,8 @@ function Recognition() {
     },
     {
       award: '3rd Best Champion — The Most Outstanding Student', org: 'LLDIKTI Region III', country: 'Indonesia', year: '2024',
-      project: '', img: '/img/rec-pilmapres.jpg',
-      note: 'Written ideas on SDG 3 with technology implementation (SDG 9).',
+      project: 'SEHATIN', img: '/img/rec-pilmapres.jpg',
+      note: 'Official Indonesian Most Outstanding Student program, with entitlement to a government award and support for the invention and the SEHATIN health census concept, advancing SDG 3 and SDG 9.',
     },
     {
       award: 'Incubator Opportunity Award', org: 'INOTEK Foundation', country: 'Indonesia', year: '',
