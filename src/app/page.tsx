@@ -392,6 +392,15 @@ function About() {
                 Demonstrating the TerraGrow prototype at the ITEX international exhibition
               </figcaption>
             </figure>
+            <figure className="mt-8">
+              <div className="relative aspect-[3/2] rounded-xl overflow-hidden border border-line bg-panel-2">
+                <Image src="/img/edu-bit.jpg" alt="Prima at the BIT Innovation Valley, Beijing Institute of Technology"
+                  fill sizes="(max-width: 1024px) 100vw, 420px" className="object-cover object-[50%_58%]" />
+              </div>
+              <figcaption className="mt-3 font-mono text-[11px] text-faint">
+                At BIT Innovation Valley, Beijing Institute of Technology
+              </figcaption>
+            </figure>
           </Reveal>
         </div>
       </div>
