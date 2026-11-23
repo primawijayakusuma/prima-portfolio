@@ -1146,7 +1146,7 @@ function Education() {
       degree: 'Bachelor of Engineering — Electrical Engineering',
       detail: 'Summa Cum Laude · Best Graduate, Class of 2025',
       period: '2021 — 2025',
-      img: '/img/edu-medal.jpg',
+      img: '/img/edu-valedictorian.jpg',
     },
   ];
   return (
